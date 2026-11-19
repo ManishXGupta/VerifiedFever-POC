@@ -1,0 +1,94 @@
+{
+  "genuine": {
+    "submitted": 1000,
+    "accepted": 1000,
+    "false_rejection_rate": 0.0
+  },
+  "attacks": {
+    "Value edited after signing": {
+      "trials": 200,
+      "detected": 200,
+      "rate": 1.0,
+      "verdicts": {
+        "bad_signature": 200
+      },
+      "expected_check": "signature"
+    },
+    "Timestamp back-dated after signing": {
+      "trials": 200,
+      "detected": 200,
+      "rate": 1.0,
+      "verdicts": {
+        "bad_signature": 200
+      },
+      "expected_check": "signature"
+    },
+    "Replay of an accepted reading": {
+      "trials": 200,
+      "detected": 200,
+      "rate": 1.0,
+      "verdicts": {
+        "replay_or_out_of_order": 200
+      },
+      "expected_check": "sequence"
+    },
+    "Impersonation with a non-enrolled key": {
+      "trials": 200,
+      "detected": 200,
+      "rate": 1.0,
+      "verdicts": {
+        "bad_signature": 200
+      },
+      "expected_check": "signature"
+    },
+    "Another student's device substituted": {
+      "trials": 200,
+      "detected": 200,
+      "rate": 1.0,
+      "verdicts": {
+        "student_mismatch": 200
+      },
+      "expected_check": "enrollment binding"
+    },
+    "Delayed (hoarded) genuine reading": {
+      "trials": 200,
+      "detected": 200,
+      "rate": 1.0,
+      "verdicts": {
+        "stale_timestamp": 200
+      },
+      "expected_check": "freshness"
+    },
+    "Unregistered device": {
+      "trials": 200,
+      "detected": 200,
+      "rate": 1.0,
+      "verdicts": {
+        "unknown_device": 200
+      },
+      "expected_check": "enrollment"
+    },
+    "Certificate field altered (dates, status, student)": {
+      "trials": 200,
+      "detected": 200,
+      "rate": 1.0,
+      "expected_check": "issuer signature"
+    }
+  },
+  "timing": {
+    "sign_reading": {
+      "median_ms": 0.034,
+      "p95_ms": 0.049
+    },
+    "verify_signature": {
+      "median_ms": 0.096,
+      "p95_ms": 0.121
+    },
+    "end_to_end_reading_to_certificate": {
+      "median_ms": 0.298,
+      "p95_ms": 0.346
+    },
+    "signed_reading_bytes": 245,
+    "platform": "Linux x86_64, Python 3.13.18"
+  }
+}

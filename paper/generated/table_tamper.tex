@@ -1,0 +1,13 @@
+\begin{table}[t]\centering\caption{Tamper-evidence tests (50 enrolled virtual thermometers)}\label{tab:tamper}\footnotesize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{p{4.1cm}p{2.0cm}r}\hline
+Attack & Caught by & Detected \\\hline
+Value edited after signing & signature & 200/200 \\
+Timestamp back-dated after signing & signature & 200/200 \\
+Replay of an accepted reading & sequence & 200/200 \\
+Impersonation with a non-enrolled key & signature & 200/200 \\
+Another student's device substituted & enrollment binding & 200/200 \\
+Delayed (hoarded) genuine reading & freshness & 200/200 \\
+Unregistered device & enrollment & 200/200 \\
+Certificate field altered (dates, status, student) & issuer signature & 200/200 \\
+\hline Genuine readings (accepted) & -- & 1000/1000 \\
+\hline\end{tabular}\end{table}

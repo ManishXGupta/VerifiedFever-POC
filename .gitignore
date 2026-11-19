@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.db
+paper/*.aux
+paper/*.log
+paper/*.out
+experiments/bench_data.csv
