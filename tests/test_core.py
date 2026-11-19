@@ -151,6 +151,57 @@ def test_web_demo_end_to_end():
     svc = app.config["svc"]
     cid = svc.nurse_queue()[0]["cert_id"]
     assert c.post(f"/nurse/{cid}/approve").status_code == 302
-    assert b"approved" in c.get("/school").data
+    assert b"Nothing received yet" in c.get("/school").data
+    r = c.post(f"/parent/share/{cid}")
+    code = r.headers["Location"].rsplit("/", 1)[-1]
+    assert b"<svg" in c.get(f"/parent/shared/{code}").data
+    r = c.post(f"/parent/shared/{code}/send", follow_redirects=True)
+    assert b"School: accepted" in r.data
+    assert b"Excused" in c.get("/school").data
     assert b"Signature valid" in c.get(f"/verify/{cid}").data
     assert c.get(f"/api/certificates/{cid}").get_json()["valid"] is True
+
+
+# ------------------------------------------------------------------ share to school
+def approved_cert():
+    svc, dev = setup()
+    cid = svc.submit(dev.read(38.4, ts=NOW), now=NOW).certificate_id
+    svc.decide(cid, True, "Nurse A", now=NOW)
+    return svc, cid
+
+
+def test_only_approved_certificates_can_be_shared():
+    svc, dev = setup()
+    cid = svc.submit(dev.read(38.4, ts=NOW), now=NOW).certificate_id
+    with pytest.raises(ValueError):
+        svc.share(cid, now=NOW)
+
+
+def test_share_code_accepted_once():
+    svc, cid = approved_cert()
+    sh = svc.share(cid, now=NOW)
+    assert svc.school_receive(share_code=sh["share_code"], now=NOW)["result"] == "accepted"
+    assert svc.school_receive(share_code=sh["share_code"], now=NOW)["result"] == "already_accepted"
+    assert svc.school_inbox()[0]["cert_id"] == cid
+
+
+def test_share_package_verified_offline_and_altered_package_refused():
+    svc, cid = approved_cert()
+    pkg = svc.share(cid, now=NOW)["package"]
+    bad = copy.deepcopy(pkg)
+    bad["certificate"]["absence_end"] = "2027-01-31"
+    assert svc.school_receive(package=bad, now=NOW)["result"] == "refused"
+    assert svc.school_receive(package=pkg, now=NOW)["result"] == "accepted"
+
+
+def test_unknown_and_expired_codes_refused():
+    svc, cid = approved_cert()
+    sh = svc.share(cid, ttl_days=1, now=NOW)
+    assert svc.school_receive(share_code="ZZZZ-9999", now=NOW)["result"] == "refused"
+    late = NOW + timedelta(days=2)
+    assert svc.school_receive(share_code=sh["share_code"], now=late)["reason"] == "share code expired"
+
+
+def test_garbage_package_refused():
+    svc, _ = approved_cert()
+    assert svc.school_receive(package={"x": 1}, now=NOW)["result"] == "refused"

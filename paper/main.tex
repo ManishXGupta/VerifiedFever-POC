@@ -1,6 +1,7 @@
 % IEEE Sensors Letters draft. Built with IEEEtran (journal mode) for portability.
-% Before submission, paste the content into the official IEEE Sensors Letters template
-% from the IEEE Sensors Council site, and complete the bench test (Section III-C).
+% Before submission, move the content into the official IEEE Sensors Letters template
+% from the IEEE Sensors Council site, and complete the bench test (Section IV-D).
+% All numbers come from paper/generated/*.tex, produced by experiments/make_tables.py.
 \documentclass[journal]{IEEEtran}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
@@ -13,105 +14,122 @@
 \newcommand{\tbd}[1]{\textcolor{red}{[#1]}}
 
 \begin{document}
-\title{Verified Fever, No Appointment: An IoT Portable Thermometer for Automated Digital Absence Certification in Schools}
+\title{Verified Fever, No Appointment: An IoT Portable Thermometer for Automated Digital Absence Certification and Early Outbreak Alerts in Schools}
 
 \author{Manish~Gupta,~\IEEEmembership{Senior Member,~IEEE}%
 \thanks{M. Gupta is with Design Laboratory Inc., Bellevue, WA, USA (e-mail: \tbd{email}; ORCID: 0009-0001-0847-7087).}%
-\thanks{Code and data: \url{https://github.com/ManishXGupta/VerifiedFever-POC}.}}
+\thanks{Code, data and demo: \url{https://github.com/ManishXGupta/VerifiedFever-POC}.}}
 
 \markboth{IEEE Sensors Letters (draft)}{Gupta: Verified Fever, No Appointment}
 \maketitle
 
 \begin{abstract}
-Schools often require a doctor's note for an illness-related absence, even for a mild one-day fever, while self-reported notes are easy to fake. We present a sensor-to-certificate system in which a registered portable thermometer signs every reading (device ID, timestamp, sequence number, Ed25519 signature), a verifier rejects altered, replayed, delayed or foreign readings, and a rule engine compares each reading with the student's own baseline as well as the school's fixed fever cutoff. When criteria are met, a signed digital absence certificate is sent for one-click validation by a nurse; high-grade or repeated fever is routed to clinical review. The school sees only absence dates and status. In a synthetic cohort of 500 students over 90 days (\NSeeds{} seeds), the personal-baseline rule raised fever-day sensitivity from \SensFixed{} (fixed 38.0\,\textdegree C) to \SensPers{}, and from \SensFixedLow{} to \SensPersLow{} for students with low normal temperatures, at \FCPers{} false certificates per 1000 student-days versus \FCLow{} for a 37.5\,\textdegree C cutoff. All 1600 scripted attacks were detected with no genuine reading rejected, and a reading was processed into a certificate in \EtoEMs{}\,ms (median).
+Many schools require a doctor's note after a few illness absences, so families visit a clinic for a mild fever only to obtain paperwork. We present a sensor-to-certificate system in which a registered portable thermometer signs each daily reading, a verifier rejects altered, replayed, delayed or foreign readings, and a rule engine compares each reading with the student's own baseline and the school's cutoff. A nurse or physician validates the resulting certificate in one click; the parent shares it directly with the school by code, QR or signed file, and the school verifies it offline and sees only dates and status. The same verified daily readings feed class- and school-level outbreak alerts. In simulation, the personal-baseline rule raised fever-day sensitivity for students with low normal temperatures from \SensFixedLow{} to \SensPersLow{} at \FCPers{} false certificates per 1000 student-days. In 480-student school terms, verified-fever surveillance detected \ObDetPers\% of influenza outbreaks within 21 days, a median \ObLeadAbs{} days before absenteeism and \ObLeadConf{} days before confirmed-case reports. All \NAttacks{} scripted attacks were detected. Each avoided note-only visit saves about \$\CostVisitBase{} (2026 prices and wages).
 \end{abstract}
 
 \begin{IEEEkeywords}
-Sensor applications, body temperature, digital signatures, Internet of Things, school health, tamper-evident records.
+Sensor applications, body temperature, digital signatures, Internet of Things, school health, syndromic surveillance.
 \end{IEEEkeywords}
 
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{figures/graphical_abstract.png}
+\caption{Overview. A signed home reading becomes a nurse-validated absence certificate that the parent shares directly with the school, and an input to early outbreak alerts. Headline numbers are from Section IV.}
+\label{fig:ga}
+\end{figure*}
+
 \section{Introduction}
-\IEEEPARstart{A}{} child with a mild fever usually needs a day at home, not a clinic visit. Yet many schools ask for a doctor's note to excuse an illness absence, which costs families time and money and uses clinic capacity for self-limiting illness. Current return-to-school guidance for common respiratory viruses is itself based on temperature: a child may return once fever-free for 24\,h without fever-reducing medication and with improving symptoms \cite{cdc2024}. The missing piece is trustworthy evidence of the fever reading.
+\IEEEPARstart{T}{he} 2025--26 influenza season hit children hard: in January 2026, children under 18 had the highest peak weekly influenza hospitalization rate observed since 2010--11 \cite{cdcw2}, and their cumulative rate was the second highest since then by March \cite{cdcw10}. Schools sit at the center of this burden, yet their attendance rules push families toward clinics for mild illness. Mississippi, for example, now requires medical documentation after a student's third illness-related absence \cite{ms2026}. A note-only visit costs the visit itself (an average of \$220 at urgent care and \$224 in primary care \cite{hcci2026}), plus a parent's time, travel and possibly lost pay; about half of lower-income working parents would be highly worried about losing pay to care for a sick child \cite{pew2026}. Time spent seeking care is a recognized economic burden \cite{sollis2026}, and virtual pediatric care has shown large savings when travel is avoided \cite{lim2026}.
 
-Connected thermometers already generate this kind of signal at scale. Smart-thermometer readings tracked influenza-like illness and improved forecasts up to three weeks ahead \cite{miller2018}, and county-level anomalies in thermometer networks were proposed as early markers of COVID-19 epicenters \cite{chamberlain2020}. School absenteeism has also been studied as a syndromic surveillance source, with mixed timeliness \cite{besculides2005,kara2011}. These systems aggregate anonymous data for public health; they do not produce verifiable evidence about one person that an institution can act on.
+Two gaps keep home thermometers out of this loop. First, a consumer reading is not evidence: a typed or edited value looks like a measured one, which is why authenticated sensor provenance is an active topic in medical IoT \cite{shukla2026}. Second, fever is usually judged with one fixed cutoff, although normal temperature varies from person to person \cite{merck2026}, and wearable temperature studies already use statistical outlier detection alongside fixed thresholds \cite{liu2026}. Meanwhile, school-based influenza surveillance still relies largely on absenteeism data \cite{joshy2026}, which mixes illness with every other reason a child stays home.
 
-Two sensing problems block that use. First, readings from consumer devices are not tamper-evident: a typed or edited value is indistinguishable from a measured one. Second, a single fixed cutoff ignores that normal body temperature differs between individuals \cite{obermeyer2017,diamond2021}, so a child whose normal is 36.3\,\textdegree C may have a real fever at 37.6\,\textdegree C that a 38.0\,\textdegree C rule misses.
-
-This letter makes three contributions: 1) a registered-thermometer evidence format and verifier that make each reading tamper-evident, fresh and bound to one enrolled student; 2) a personal-baseline fever rule that keeps the school's fixed cutoff and adds a deviation test against the student's own recent readings; and 3) an automated, clinician-validated certificate workflow that discloses only the minimum information to the school. We release an open-source proof of concept and evaluate detection and tamper evidence.
+This letter makes four contributions: 1) a registered-thermometer evidence format and verifier; 2) a personal-baseline fever rule that keeps the school's cutoff; 3) a clinician-validated certificate that the family shares directly with the school, in the spirit of verifiable credentials \cite{w3c2026}, with minimum disclosure; and 4) cohort surveillance on the same verified daily readings, evaluated against absenteeism and confirmed-case reporting. We also quantify cost and time savings and release an open-source proof of concept.
 
 \section{System Design}
-Fig.~\ref{fig:arch} shows the architecture and Fig.~\ref{fig:flow} the decision flow.
+Fig.~\ref{fig:arch} shows the architecture and Fig.~\ref{fig:ui} the user interface.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/architecture.pdf}
-\caption{Architecture. The thermometer signs each reading; the service verifies it, applies the personal-baseline rule and issues a signed certificate that a nurse validates. The school portal receives dates and status only.}
+\includegraphics[width=0.98\textwidth]{figures/architecture.pdf}
+\caption{Architecture. Green arrows: the approved certificate returns to the parent's wallet and is shared directly with the school. Dashed: daily flags feed cohort surveillance.}
 \label{fig:arch}
 \end{figure*}
 
-\subsection{Registered Thermometer and Signed Reading}
-At enrollment, with parental consent, the school registers a device ID and the device's Ed25519 public key \cite{rfc8032} against one student. The device holds the private key and never sees the student's identity. Each reading is a payload $\{\mathit{device\_id}, \mathit{seq}, \mathit{ts}, T, \mathit{site}, \mathit{nonce}\}$ encoded as canonical JSON and signed; a signed reading is \ReadingBytes{} bytes. In the proof of concept the thermometer is simulated in software; moving signing into firmware with a secure element is the path to hardware attestation.
-
-\subsection{Evidence Verifier}
-A reading is accepted only if: the device is enrolled and active; any claimed student matches the enrolled student; the signature verifies; $\mathit{seq}$ exceeds the last accepted value (anti-replay); $\mathit{ts}$ is not in the future (5\,min skew) and not older than 6\,h (freshness); and $34 \le T \le 43$\,\textdegree C (plausibility). Every rejection is logged with its reason.
-
-\subsection{Personal-Baseline Rule}
-The baseline $B$ is the median of the last 14 accepted readings below 37.5\,\textdegree C; with fewer than five such readings a population default of 36.8\,\textdegree C is used. A reading $T$ is febrile if
+\subsection{Registered Thermometer, Verifier and Rule}
+At enrollment, with parental consent, the school registers a device ID and the device's Ed25519 public key against one student; the device never sees the student's identity. Each reading $\{\mathit{device\_id}, \mathit{seq}, \mathit{ts}, T, \mathit{site}, \mathit{nonce}\}$ is canonical JSON, signed (\ReadingBytes{} bytes). A reading is accepted only if the device is enrolled and active, any claimed student matches, the signature verifies, $\mathit{seq}$ increases (anti-replay), $\mathit{ts}$ is fresh (at most 6\,h old, 5\,min skew) and $34 \le T \le 43$\,\textdegree C. The baseline $B$ is the median of the last 14 accepted readings below 37.5\,\textdegree C (default 36.8\,\textdegree C until five exist). A reading is febrile if
 \begin{equation}
 T \ge T_{\mathrm{fix}} \;\lor\; \left(T \ge T_{\mathrm{floor}} \land T - B \ge \Delta\right),
 \label{eq:rule}
 \end{equation}
-with $T_{\mathrm{fix}} = 38.0$\,\textdegree C (the school policy, always honoured), $T_{\mathrm{floor}} = 37.5$\,\textdegree C and $\Delta = 1.0$\,\textdegree C. A febrile reading at or above 39.5\,\textdegree C, or on a third consecutive day, is escalated to clinical review instead of being certified. A deviation of at least 0.7\,\textdegree C without meeting (\ref{eq:rule}) is flagged as \emph{watch} with no certificate.
+with the school cutoff $T_{\mathrm{fix}} = 38.0$\,\textdegree C always honoured, $T_{\mathrm{floor}} = 37.5$\,\textdegree C and $\Delta = 1.0$\,\textdegree C. Fever at or above 39.5\,\textdegree C, or on a third consecutive day, goes to clinical review instead of certification.
 
-\begin{figure}[t]
+\subsection{Certificate, Validation and Direct Sharing}
+A febrile reading creates or extends a certificate (fever day plus a 24\,h fever-free period) holding the student ID, dates, status, validator and a SHA-256 digest of the signed evidence; the service signs it and re-signs it on every change. After one-click validation by a nurse or physician, the certificate appears in the parent's wallet. The parent shares it with a short code or QR, or as a signed file. The school portal accepts it only if the issuer signature verifies, the status is approved, the record still matches the issuer (not revoked or superseded), the code is unexpired and the student is enrolled; a duplicate is recognized. The school sees the reason (fever-related absence), dates and status, never temperatures.
+
+\begin{figure*}[t]
 \centering
-\includegraphics[width=0.92\columnwidth]{figures/flow.pdf}
-\caption{Decision flow from a signed reading to a validated certificate.}
-\label{fig:flow}
-\end{figure}
+\includegraphics[width=0.98\textwidth]{figures/ui.pdf}
+\caption{Proof-of-concept screens: (a) a signed reading of 37.6\,\textdegree C is +1.3\,\textdegree C above this student's baseline, so a certificate is created although a 38.0\,\textdegree C rule would not flag it; (b) the parent shares the approved certificate by code or QR; (c) nurse validation; (d) the school verifies and accepts it.}
+\label{fig:ui}
+\end{figure*}
 
-\subsection{Certificate and Data Minimization}
-A febrile reading creates or extends a certificate covering the fever day plus the 24\,h fever-free period. The certificate holds the certificate ID, student ID, absence dates, status, validator role and time, and a SHA-256 digest of the signed readings used as evidence; the service signs it and re-signs it on every change, so anyone with the issuer public key can verify it offline. Temperatures stay in the nurse console. The school portal shows only the reason (fever-related absence), the dates and the validation status, in line with the minimum-necessary principle for education records \cite{ferpa}.
+\subsection{Cohort Surveillance}
+Each morning, the count of verified febrile students per class and per school is monitored with a one-sided CUSUM against a trailing 28-day baseline (3-day guard band) and a class-level count threshold; an alert goes to the school nurse and public health, without disclosing individual temperatures.
 
 \section{Evaluation}
-\subsection{Detection on a Synthetic Cohort}
-We simulated 500 students for 90 daily morning readings. Each student's normal temperature was drawn from $\mathcal{N}(36.7, 0.25^2)$\,\textdegree C, clipped to [36.0, 37.4], reflecting reported inter-individual differences \cite{obermeyer2017,diamond2021}. Readings added day-to-day variation ($\sigma = 0.15$\,\textdegree C), measurement noise ($\sigma = 0.10$\,\textdegree C) and 0.1\,\textdegree C display rounding. Fever episodes started with daily probability 0.012, lasted 1--3 days and raised temperature 1.0--2.5\,\textdegree C above the student's own normal; non-infectious transient rises of 0.3--0.8\,\textdegree C occurred on 3\% of other days. A day inside an episode was a fever day. After a 14-day warm-up, each seed gave about \FeverDays{} fever days in \Episodes{} episodes. The baseline was computed causally from past readings only.
+\subsection{Individual Fever Detection}
+We simulated 500 students for 90 days: normal temperature $\mathcal{N}(36.7, 0.25^2)$\,\textdegree C clipped to [36.0, 37.4], day-to-day noise 0.15\,\textdegree C, measurement noise 0.10\,\textdegree C, 0.1\,\textdegree C display rounding, fever episodes of 1--3 days raising temperature 1.0--2.5\,\textdegree C above a student's own normal, and 0.3--0.8\,\textdegree C transient rises on 3\% of other days. The baseline was computed causally (\NSeeds{} seeds).
 
 \input{generated/table_detection.tex}
 
-Table~\ref{tab:detection} and Fig.~\ref{fig:results} summarize the results. The fixed 38.0\,\textdegree C rule missed many fever days in students with low normal temperatures. The personal-baseline rule recovered most of them, raising episode-level detection from \EpiFixed\% to \EpiPers\%, while adding less than one false certificate per 1000 student-days. Lowering the fixed cutoff to 37.5\,\textdegree C reached similar sensitivity, but it produced \FCLow{} false certificates per 1000 student-days, concentrated in students with high normal temperatures (specificity \SpecHighLow{} in that tertile). The personal rule had the highest F1 (\FOnePers{} vs \FOneFixed{} for the fixed 38.0\,\textdegree C rule). During the cold-start period, when the population default replaces the personal baseline, sensitivity was \ColdSensPers{}. Across nine combinations of inter-individual spread (0.15--0.35\,\textdegree C) and measurement noise (0.05--0.20\,\textdegree C), personal-rule sensitivity stayed at \SensRangePers{} (fixed 38.0\,\textdegree C: \SensRangeFixed{}), with \FCRangePers{} false certificates per 1000 student-days (fixed 37.5\,\textdegree C: \FCRangeLow{}).
+The fixed 38.0\,\textdegree C rule missed many fever days in students with low normal temperatures (Table~\ref{tab:detection}, Fig.~\ref{fig:results}). The personal rule recovered most of them, raising episode detection from \EpiFixed\% to \EpiPers\% while adding less than one false certificate per 1000 student-days; a 37.5\,\textdegree C cutoff reached similar sensitivity at \FCLow{} false certificates. Across nine settings of inter-individual spread (0.15--0.35\,\textdegree C) and noise (0.05--0.20\,\textdegree C), personal-rule sensitivity stayed at \SensRangePers{} (fixed 38.0\,\textdegree C: \SensRangeFixed{}).
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figures/results.pdf}
-\caption{(a) Fever-day sensitivity by tertile of students' normal temperature. (b) False certificates per 1000 student-days. Mean of \NSeeds{} seeds.}
+\caption{Individual detection. (a) Fever-day sensitivity by tertile of normal temperature. (b) False certificates per 1000 student-days.}
 \label{fig:results}
 \end{figure}
 
-\subsection{Tamper Evidence and Processing Time}
-We enrolled 50 virtual thermometers, submitted 1000 genuine readings and ran 200 trials of each attack in Table~\ref{tab:tamper}. Every attack was rejected by the intended check, and every genuine reading was accepted. Altering any field of an issued certificate (dates, status or student) also failed signature verification in all 200 trials. On a commodity x86-64 machine (Python 3.13, single thread), median times were \SignMs{}\,ms to sign a reading, \VerifyMs{}\,ms to verify a signature, and \EtoEMs{}\,ms (95th percentile \EtoEPms{}\,ms) from receiving a reading to issuing a certificate. Approval by the nurse then completes the process, compared with a clinic visit to obtain a note.
+\subsection{Early Outbreak Detection}
+Each simulated term had 480 students in 20 classes over 120 school days, with background non-influenza fevers, ordinary absences (4.5\% with school-wide day effects) and readings on 85\% of mornings. In outbreak terms one student was infected between days 30 and 90, and influenza spread within classes and across the school by attendance; 75\% of cases were febrile, and 85\% of febrile children stayed home. Of 400 outbreak terms, \ObFizzled{} fizzled (fewer than five symptomatic cases) and were excluded; the remaining \ObTerms{} had a median of \ObSize{} symptomatic cases (IQR \ObSizeQone--\ObSizeQthree). Confirmed cases required care seeking (40\%), testing (50\%) and a 3--6 day reporting delay. Each signal's detector was tuned on separate calibration terms so that at most 10\% of outbreak-free terms raised a false alert.
 
-\input{generated/table_tamper.tex}
+\input{generated/table_outbreak.tex}
 
-\subsection{Bench Agreement (Protocol)}
-Sensor accuracy is tested without human participants. The portable thermometer and a calibrated reference probe are held side by side in a stirred, temperature-controlled water bath at 36.0, 37.0, 37.5, 38.0, 39.0 and 40.0\,\textdegree C, with at least five paired readings per set point. Agreement is reported as Bland--Altman bias and 95\% limits of agreement \cite{bland1986}, together with agreement in classification at the 38.0\,\textdegree C cutoff. The analysis script is in the repository. \tbd{Results to be inserted after the bench test: n pairs, bias, limits of agreement, \% within $\pm$0.2\,\textdegree C, classification agreement.}
+Verified-fever surveillance detected the most outbreaks and the earliest (Table~\ref{tab:outbreak}, Fig.~\ref{fig:outbreak}): a median \ObDelayPers{} days after the first symptomatic case, when about \ObCasesPers{} children had fallen ill, versus \ObDelayConf{} days and \ObCasesConf{} cases for confirmed reports. Absenteeism detected only \ObDetAbs\%, because ordinary absences mask the outbreak signal. Among outbreaks detected by both, verified fever alerted a median \ObLeadAbs{} days before absenteeism (n = \ObPairsAbs) and \ObLeadConf{} days before confirmed reports (n = \ObPairsConf). Using the personal rule rather than a fixed 38.0\,\textdegree C cutoff raised detection from \ObDetFixed\% to \ObDetPers\%.
 
-\section{Limitations}
-The detection results come from a simulated cohort, and the gain depends on the assumed spread of normal temperatures and the noise. They should be confirmed with longitudinal readings from real students. Cryptographic checks prove that a reading came unaltered from an enrolled device. They cannot show that the probe was in the right child's mouth, or that it was not warmed. Nurse review, baseline-consistent fever dynamics and wearable sensing are partial mitigations. A reading taken after a fever-reducing medicine can mask a fever. The software key in the proof of concept must move into a secure element. The system documents a fever and does not diagnose its cause.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/outbreak.pdf}
+\caption{Cumulative share of school influenza outbreaks detected by days after the first symptomatic case, at matched false-alarm rates.}
+\label{fig:outbreak}
+\end{figure}
 
-\section{Conclusion}
-Treating a portable thermometer as a registered evidence device, and comparing its readings with the student's own baseline, turns a routine home measurement into a verifiable, privacy-preserving absence certificate. In simulation, the personal-baseline rule detected fevers that a fixed cutoff missed in students with low normal temperatures, without a matching rise in false certificates, and the evidence chain detected every scripted attack. Next steps are the bench test, firmware signing on a Bluetooth thermometer, and a pilot with school nurses.
+\subsection{Cost and Time Savings}
+Table~\ref{tab:cost} combines the average urgent care price \cite{hcci2026}, the May 2026 average hourly wage of \$37.53 \cite{bls2026} and the 2026 vehicle rate of \$0.76 per mile \cite{irs2026} with stated time and distance assumptions. Each avoided note-only visit saves about \$\CostVisitLow--\$\CostVisitHigh{} (base \$\CostVisitBase); for a 500-student school where 20\% of students would otherwise make one such visit a year, that is about \$\CostSchoolBase{} and \HoursSchoolBase{} parent hours a year, and the thermometers pay back in \PaybackBase{} years.
 
-\begin{thebibliography}{10}
-\bibitem{cdc2024} Centers for Disease Control and Prevention, ``Respiratory virus guidance,'' Mar. 2024. [Online]. Available: \url{https://www.cdc.gov/respiratory-viruses/guidance/respiratory-virus-guidance.html}
-\bibitem{miller2018} A.~C. Miller, I.~Singh, E.~Koehler, and P.~M. Polgreen, ``A smartphone-driven thermometer application for real-time population- and individual-level influenza surveillance,'' \emph{Clin. Infect. Dis.}, vol.~67, no.~3, pp.~388--397, 2018, doi: 10.1093/cid/ciy073.
-\bibitem{chamberlain2020} S.~D. Chamberlain, I.~Singh, C.~Ariza, A.~Daitch, P.~Philips, and B.~D. Dalziel, ``Real-time detection of COVID-19 epicenters within the United States using a network of smart thermometers,'' medRxiv preprint, 2020, doi: 10.1101/2020.04.06.20039909.
-\bibitem{besculides2005} M.~Besculides, R.~Heffernan, F.~Mostashari, and D.~Weiss, ``Evaluation of school absenteeism data for early outbreak detection, New York City,'' \emph{BMC Public Health}, vol.~5, art.~105, 2005, doi: 10.1186/1471-2458-5-105.
-\bibitem{kara2011} E.~O. Kara \emph{et al.}, ``Absenteeism in schools during the 2009 influenza A(H1N1) pandemic: A useful tool for early detection of influenza activity in the community?'' \emph{Epidemiol. Infect.}, 2011, doi: 10.1017/S0950268811002093.
-\bibitem{obermeyer2017} Z.~Obermeyer, J.~K. Samra, and S.~Mullainathan, ``Individual differences in normal body temperature: Longitudinal big data analysis of patient records,'' \emph{BMJ}, vol.~359, art.~j5468, 2017, doi: 10.1136/bmj.j5468.
-\bibitem{diamond2021} A.~Diamond, C.~T. Lye, D.~Prasad, and D.~Abbott, ``One size does not fit all: Assuming the same normal body temperature for everyone is not justified,'' \emph{PLoS ONE}, vol.~16, no.~2, art.~e0245257, 2021, doi: 10.1371/journal.pone.0245257.
-\bibitem{rfc8032} S.~Josefsson and I.~Liusvaara, ``Edwards-curve digital signature algorithm (EdDSA),'' IETF RFC 8032, Jan. 2017.
-\bibitem{ferpa} Family Educational Rights and Privacy Act, 20 U.S.C. \S~1232g; 34 CFR Part 99.
-\bibitem{bland1986} J.~M. Bland and D.~G. Altman, ``Statistical methods for assessing agreement between two methods of clinical measurement,'' \emph{Lancet}, vol.~1, no.~8476, pp.~307--310, 1986.
+\input{generated/table_cost.tex}
+
+\subsection{Tamper Evidence, Timing and Bench Agreement}
+With 50 enrolled virtual thermometers, all 200 trials of each of seven reading attacks (edited value, back-dated timestamp, replay, non-enrolled key, another student's device, delayed reading, unregistered device) and of certificate alteration were rejected, and all 1000 genuine readings were accepted. Altered shared files were refused by the school. Median times on a commodity x86-64 machine were \VerifyMs{}\,ms to verify a signature and \EtoEMs{}\,ms from reading to certificate. Sensor agreement is tested on a bench, with the thermometer and a calibrated reference in a stirred water bath at six set points from 36.0 to 40.0\,\textdegree C, reporting bias, limits of agreement and classification at 38.0\,\textdegree C. \tbd{Insert bench results.}
+
+\section{Limitations and Conclusion}
+Detection and outbreak results come from simulation and depend on stated assumptions; savings depend on local prices and policies. Signatures prove a reading came unaltered from an enrolled device, not that the probe was used correctly or not warmed; fever-reducing medicine can mask fever; the POC key must move into a secure element; the system documents fever and does not diagnose. Within these limits, a registered thermometer turns a routine home measurement into a verifiable certificate that families share directly with schools, saves a clinic visit, and provides an outbreak signal days earlier than existing school data. Next steps are the bench test, BLE firmware signing and a pilot with school nurses.
+
+\begin{thebibliography}{15}
+\bibitem{cdcw2} Centers for Disease Control and Prevention, ``Weekly US influenza surveillance report: Key updates for week 2, ending January 17, 2026,'' FluView, Jan. 2026.
+\bibitem{cdcw10} Centers for Disease Control and Prevention, ``Weekly US influenza surveillance report: Key updates for week 10, ending March 14, 2026,'' FluView, Mar. 2026.
+\bibitem{ms2026} WLOX News, ``Mississippi attendance law brings new rules for student absences,'' Sep. 16, 2026 (Mississippi Senate Bill 2103).
+\bibitem{hcci2026} Health Care Cost Institute, ``Urgent care spending increased by 50\% over 5 years driven by higher use,'' Jan. 28, 2026.
+\bibitem{pew2026} R. Minkin, L. Lin, D. Braga, and K. Hurst, ``For working parents, the boundary between work and family is often blurred,'' Pew Research Center, Jun. 16, 2026.
+\bibitem{sollis2026} Sollis Health, ``The real cost of healthcare for Americans: 2026 health trend report,'' industry report, Sep. 2026.
+\bibitem{lim2026} E. Lim, J. Strychowsky, A. C. Gunz, and S. Belisle, ``Sustainability in quality improvement: Outcomes of a novel pediatric virtual urgent care in Ontario, Canada,'' \emph{West. J. Emerg. Med.}, vol.~27, no.~5, 2026, doi: 10.5811/westjem.54076.
+\bibitem{shukla2026} V. Shukla, V. Shukla, Atul, D. Mishra, and M. K. Das, ``ASCON-based lightweight cryptographic provenance for distinguishing physiological events, sensor faults, and cyberattacks in IoMT,'' Cryptology ePrint Archive, Paper 2026/1929, Sep. 2026.
+\bibitem{merck2026} D. M. Consolini, ``Fever in infants and children,'' \emph{Merck Manual Consumer Version}, last updated May 2026.
+\bibitem{liu2026} Y. Liu, Q. Zhao, K. Li, and D. Dowding, ``Continuous temperature monitoring via wearable devices for fever or infection management in acute care hospitals: Scoping review of clinical implementation and data analytics,'' \emph{JMIR mHealth uHealth}, vol.~14, art.~e89773, 2026, doi: 10.2196/89773.
+\bibitem{joshy2026} V. Joshy, Z. Feng, L. Deeth, K. Vanderkruk, and J. Slater, ``DESA: An R package for detecting epidemics using a school-absenteeism surveillance framework,'' \emph{J. Open Res. Softw.}, vol.~14, art.~11, Feb. 2026, doi: 10.5334/jors.634.
+\bibitem{w3c2026} W3C Verifiable Credentials Working Group, ``Verifiable credentials overview,'' W3C Group Note, Jun. 17, 2026.
+\bibitem{bls2026} U.S. Bureau of Labor Statistics, ``The employment situation: May 2026,'' USDL-26-0786, Jun. 5, 2026.
+\bibitem{irs2026} Internal Revenue Service, ``Optional standard mileage rates,'' Announcement 2026-11, Jul. 2026.
 \end{thebibliography}
 \end{document}

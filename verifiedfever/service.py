@@ -5,6 +5,7 @@ server), which keeps the proof of concept easy to run and inspect.
 from __future__ import annotations
 
 import json
+import secrets
 import sqlite3
 import uuid
 from dataclasses import dataclass
@@ -29,6 +30,11 @@ CREATE TABLE IF NOT EXISTS certificates (
   absence_end TEXT NOT NULL, status TEXT NOT NULL, escalated INTEGER NOT NULL DEFAULT 0,
   reasons TEXT NOT NULL, evidence_reading_ids TEXT NOT NULL, evidence_digest TEXT NOT NULL,
   issued_at TEXT NOT NULL, validated_by TEXT, validated_at TEXT, note TEXT, issuer_sig TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS shares (
+  share_code TEXT PRIMARY KEY, cert_id TEXT NOT NULL, created_at TEXT NOT NULL, expires_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS school_inbox (
+  cert_id TEXT PRIMARY KEY, via TEXT NOT NULL, received_at TEXT NOT NULL, decision TEXT NOT NULL,
+  decided_by TEXT, reason TEXT);
 """
 
 # Certificate status values
@@ -253,6 +259,83 @@ class FeverCertService:
         return [dict(r) for r in self.db.execute(
             "SELECT ts, temp_c, verdict, decision, baseline_c, deviation_c FROM readings WHERE student_id=?"
             " ORDER BY id DESC LIMIT ?", (student_id, limit))]
+
+    # ---------------------------------------------------------------- parent wallet and sharing
+    def parent_certificates(self, student_id: str) -> list[dict]:
+        rows = self.db.execute(
+            "SELECT c.cert_id, c.absence_start, c.absence_end, c.status, c.validated_by,"
+            " i.decision AS school_decision FROM certificates c LEFT JOIN school_inbox i USING(cert_id)"
+            " WHERE c.student_id=? ORDER BY c.issued_at DESC", (student_id,)).fetchall()
+        return [dict(r) for r in rows]
+
+    def share(self, cert_id: str, ttl_days: int = 14, now: Optional[datetime] = None) -> dict:
+        """Parent shares an approved certificate directly with the school.
+
+        Returns a short share code (for typing or a QR code) and a self-contained,
+        signed package that the school can verify offline with the issuer public key.
+        """
+        now = now or datetime.now(timezone.utc)
+        rec = self.school_record(cert_id)
+        if rec is None or rec["status"] != APPROVED:
+            raise ValueError("only an approved certificate can be shared")
+        alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"  # no 0/O, 1/I/L
+        raw = "".join(secrets.choice(alphabet) for _ in range(8))
+        code = f"{raw[:4]}-{raw[4:]}"
+        self.db.execute("INSERT INTO shares(share_code, cert_id, created_at, expires_at) VALUES (?,?,?,?)",
+                        (code, cert_id, _iso(now), _iso(now + timedelta(days=ttl_days))))
+        self.db.commit()
+        return {"share_code": code, "expires_at": _iso(now + timedelta(days=ttl_days)),
+                "package": {"type": "VerifiedFeverAbsenceCertificate", "version": 1,
+                            "issuer_alg": "Ed25519", "issuer_public_key": self.issuer_public_key,
+                            "certificate": rec}}
+
+    def school_receive(self, share_code: Optional[str] = None, package: Optional[dict] = None,
+                       school_user: str = "School office", now: Optional[datetime] = None) -> dict:
+        """School verifies a shared certificate and accepts or refuses it automatically.
+
+        Accepts only if: the share code is valid and unexpired (or the package parses),
+        the issuer signature verifies, the certificate is approved, it still matches the
+        issuer's current record (not revoked or altered), and the student is enrolled.
+        """
+        now = now or datetime.now(timezone.utc)
+        via = "share_code" if share_code else "file"
+        if share_code:
+            row = self.db.execute("SELECT * FROM shares WHERE share_code=?",
+                                  (share_code.strip().upper(),)).fetchone()
+            if row is None:
+                return {"result": "refused", "reason": "unknown share code"}
+            if _iso(now) > row["expires_at"]:
+                return {"result": "refused", "reason": "share code expired"}
+            rec = self.school_record(row["cert_id"])
+        else:
+            try:
+                rec = dict(package["certificate"])
+            except (TypeError, KeyError):
+                return {"result": "refused", "reason": "not a certificate package"}
+        if not self.verify_certificate(rec):
+            return {"result": "refused", "reason": "signature invalid: altered or not issued by a trusted issuer"}
+        current = self.school_record(rec["cert_id"])
+        if current is None or current["issuer_sig"] != rec.get("issuer_sig"):
+            return {"result": "refused", "reason": "certificate no longer matches issuer record (revoked or superseded)"}
+        if rec["status"] != APPROVED:
+            return {"result": "refused", "reason": f"certificate status is {rec['status']}"}
+        if not self.db.execute("SELECT 1 FROM enrollments WHERE student_id=?", (rec["student_id"],)).fetchone():
+            return {"result": "refused", "reason": "student not enrolled at this school"}
+        existing = self.db.execute("SELECT * FROM school_inbox WHERE cert_id=?", (rec["cert_id"],)).fetchone()
+        if existing:
+            return {"result": "already_accepted", "reason": "received earlier", "certificate": rec}
+        self.db.execute("INSERT INTO school_inbox(cert_id, via, received_at, decision, decided_by, reason)"
+                        " VALUES (?,?,?,?,?,?)",
+                        (rec["cert_id"], via, _iso(now), "accepted", school_user, "verified signature, approved"))
+        self.db.commit()
+        return {"result": "accepted", "reason": "verified signature, approved by clinician", "certificate": rec}
+
+    def school_inbox(self) -> list[dict]:
+        rows = self.db.execute(
+            "SELECT i.*, c.absence_start, c.absence_end, c.validated_by, c.student_id, e.student_name"
+            " FROM school_inbox i JOIN certificates c USING(cert_id) JOIN enrollments e USING(student_id)"
+            " ORDER BY i.received_at DESC").fetchall()
+        return [dict(r) for r in rows]
 
     def verify_certificate(self, record: dict) -> bool:
         """Anyone holding the issuer public key can check a certificate offline."""

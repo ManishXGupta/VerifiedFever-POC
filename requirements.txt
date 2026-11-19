@@ -3,3 +3,5 @@ flask>=3.0
 numpy>=1.26
 matplotlib>=3.8
 pytest>=8
+segno>=1.6
+playwright>=1.40  # optional: only for docs/make_screenshots.py and docs/make_graphical_abstract.py

@@ -86,6 +86,77 @@ def main():
         "EtoEPms": f"{t['end_to_end_reading_to_certificate']['p95_ms']:.2f}",
         "ReadingBytes": str(t["signed_reading_bytes"]),
     }
+    # ---- outbreak table
+    ob = json.loads((RES / "outbreak_results.json").read_text())
+    names = {"VF-personal": "Verified fever, personal", "VF-fixed": "Verified fever, fixed 38.0\\,\\textdegree C",
+             "Confirmed": "Confirmed-case reports", "Absence": "All-cause absence"}
+    orows = []
+    for k, label in names.items():
+        v = ob["summary"][k]
+        orows.append(f"{label} & {100 * v['detection_rate']:.0f}\\% & {v['delay_median']:.0f} ({v['delay_q1']:.0f}--{v['delay_q3']:.0f})"
+                     f" & {v['cases_at_alert_median']:.0f} & {100 * v['false_alarm_terms']:.0f}\\% \\\\")
+    (OUT / "table_outbreak.tex").write_text(
+        "\\begin{table}[t]\\centering\\caption{School influenza outbreak detection "
+        f"({ob['n_eval_outbreak_terms']} outbreak terms, {ob['n_eval_null_terms']} outbreak-free terms)}}"
+        "\\label{tab:outbreak}\\footnotesize\\setlength{\\tabcolsep}{2.5pt}\n"
+        "\\begin{tabular}{lcccc}\\hline\n"
+        "Signal & Detected & Delay, d & Cases & False alarm \\\\\\hline\n" + "\n".join(orows) +
+        "\n\\hline\\end{tabular}\\\\[2pt]\\parbox{\\columnwidth}{\\scriptsize Detected: within "
+        f"{ob['detect_window_days']} days of the first symptomatic case. Delay: median (IQR) days from that case. "
+        "Cases: median symptomatic cases by the alert day. False alarm: share of outbreak-free terms with any alert.}\\end{table}\n")
+
+    # ---- cost table
+    cost = json.loads((RES / "cost_results.json").read_text())
+    def row(label, f):
+        return label + " & " + " & ".join(f(cost[k]) for k in ("low", "base", "high")) + " \\\\"
+    crow = [
+        row("Visit price", lambda c: f"\\${c['per_visit']['visit_price']:.0f}"),
+        row("Parent time (h)", lambda c: f"{c['per_visit']['parent_hours_saved']:.1f}"),
+        row("Parent time value", lambda c: f"\\${c['per_visit']['parent_time_cost']:.0f}"),
+        row("Travel", lambda c: f"\\${c['per_visit']['travel']:.0f}"),
+        row("\\textbf{Net saving per visit}", lambda c: f"\\textbf{{\\${c['per_visit']['net_saving']:.0f}}}"),
+        row("Note-only visits avoided$^{\\dagger}$", lambda c: f"{c['per_school_year']['visits_avoided']:.0f}"),
+        row("\\textbf{Annual saving}$^{\\dagger}$", lambda c: f"\\textbf{{\\${c['per_school_year']['annual_net_saving']:,.0f}}}"),
+        row("Parent hours saved$^{\\dagger}$", lambda c: f"{c['per_school_year']['parent_hours_saved']:.0f}"),
+        row("Thermometer payback (yr)", lambda c: f"{c['per_school_year']['payback_years']:.1f}"),
+    ]
+    (OUT / "table_cost.tex").write_text(
+        "\\begin{table}[t]\\centering\\caption{Estimated savings when a verified certificate replaces a note-only visit}"
+        "\\label{tab:cost}\\footnotesize\\setlength{\\tabcolsep}{4pt}\n\\begin{tabular}{lrrr}\\hline\n"
+        "& Low & Base & High \\\\\\hline\n" + "\n".join(crow) +
+        "\n\\hline\\end{tabular}\\\\[2pt]\\parbox{\\columnwidth}{\\scriptsize $^{\\dagger}$Per 500-student school per year, "
+        "with 10/20/30\\% of students otherwise making one note-only visit. Net of 3\\,min nurse review; "
+        "\\$30 thermometer per student. Wage \\$37.53/h, vehicle \\$0.76/mile.}\\end{table}\n")
+    sv = ob["summary"]
+    macros.update({
+        "ObDetPers": f"{100 * sv['VF-personal']['detection_rate']:.0f}",
+        "ObDetFixed": f"{100 * sv['VF-fixed']['detection_rate']:.0f}",
+        "ObDetAbs": f"{100 * sv['Absence']['detection_rate']:.0f}",
+        "ObDetConf": f"{100 * sv['Confirmed']['detection_rate']:.0f}",
+        "ObDelayPers": f"{sv['VF-personal']['delay_median']:.0f}",
+        "ObDelayAbs": f"{sv['Absence']['delay_median']:.0f}",
+        "ObDelayConf": f"{sv['Confirmed']['delay_median']:.0f}",
+        "ObCasesPers": f"{sv['VF-personal']['cases_at_alert_median']:.0f}",
+        "ObCasesAbs": f"{sv['Absence']['cases_at_alert_median']:.0f}",
+        "ObCasesConf": f"{sv['Confirmed']['cases_at_alert_median']:.0f}",
+        "ObLeadAbs": f"{ob['lead_time_vs']['Absence']['median_days_earlier']:.0f}",
+        "ObLeadConf": f"{ob['lead_time_vs']['Confirmed']['median_days_earlier']:.0f}",
+        "ObPairsAbs": str(ob['lead_time_vs']['Absence']['n_pairs']),
+        "ObPairsConf": str(ob['lead_time_vs']['Confirmed']['n_pairs']),
+        "ObTerms": str(ob["n_eval_outbreak_terms"]), "ObNull": str(ob["n_eval_null_terms"]),
+        "ObSize": f"{ob['symptomatic_cases_median']:.0f}",
+        "ObSizeQone": f"{ob['symptomatic_cases_q1']:.0f}", "ObSizeQthree": f"{ob['symptomatic_cases_q3']:.0f}",
+        "ObFizzled": str(ob["n_outbreaks_fizzled"]),
+        "CostVisitBase": f"{cost['base']['per_visit']['net_saving']:.0f}",
+        "CostVisitLow": f"{cost['low']['per_visit']['net_saving']:.0f}",
+        "CostVisitHigh": f"{cost['high']['per_visit']['net_saving']:.0f}",
+        "CostSchoolBase": f"{cost['base']['per_school_year']['annual_net_saving']:,.0f}",
+        "CostSchoolLow": f"{cost['low']['per_school_year']['annual_net_saving']:,.0f}",
+        "CostSchoolHigh": f"{cost['high']['per_school_year']['annual_net_saving']:,.0f}",
+        "HoursSchoolBase": f"{cost['base']['per_school_year']['parent_hours_saved']:.0f}",
+        "PaybackBase": f"{cost['base']['per_school_year']['payback_years']:.1f}",
+        "NAttacks": str(sum(v["trials"] for v in tam["attacks"].values())),
+    })
     (OUT / "numbers.tex").write_text("\n".join(f"\\newcommand{{\\{k}}}{{{v}}}" for k, v in macros.items()) + "\n")
     print("\n".join(f"{k} = {v}" for k, v in macros.items()))
 

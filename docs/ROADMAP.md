@@ -21,7 +21,7 @@ The proof of concept is deliberately small. Planned extensions, roughly in order
 ## 4. Generalized proactive health monitoring (separate paper)
 - Opt-in proactive temperature registration for any individual, not only students.
 - Physician dashboard comparing many people's temperature trends over the same period.
-- Cohort-level detection of synchronized rises (classroom, school, area) as an early outbreak signal, with privacy-preserving aggregation.
+- Cohort-level detection is in the POC (simulation); next: area-level aggregation across schools with privacy-preserving counts.
 
 ## Known limitations
 - Cryptography proves that a reading came unaltered from an enrolled device. It does not prove that the probe was used correctly on the right child, or that it was not warmed.
