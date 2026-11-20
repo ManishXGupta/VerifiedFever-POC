@@ -3,15 +3,15 @@ digraph registry {
   node [shape=box, style="rounded,filled", fillcolor="#ffffff", color="#5b6472", fontname="Helvetica", fontsize=11, margin="0.09,0.05"];
   edge [color="#5b6472", fontname="Helvetica", fontsize=9.5, arrowsize=0.6];
 
-  person [label="Person\nregistered thermometer\n(one signed reading a day)", fillcolor="#e8f1fc"];
+  person [label="Person + IoT thermometer\n(one signed reading a day)", fillcolor="#e8f1fc"];
   consent [label="Consent manager\nmonitoring / cohort / physician\nwithdraw = stop + erase", fillcolor="#e8f1fc"];
 
-  subgraph cluster_reg { label="Secure registry"; style="rounded,dashed"; color="#1450a3"; fontsize=10.5; fontcolor="#1450a3";
+  subgraph cluster_reg { label="Secure registry + AI anomaly layer"; style="rounded,dashed"; color="#1450a3"; fontsize=10.5; fontcolor="#1450a3";
     verify [label="Verify\nsignature, device, replay,\nfreshness, consent", fillcolor="#dbe8fa"];
-    indiv  [label="Individual layer\npersonal baseline,\nage-aware fever rule", fillcolor="#fdeee7"];
-    cohort [label="Cohort layer\ncount test + drift test\nper class, workplace, care home,\npostal code; population CUSUM", fillcolor="#fdeee7"];
+    indiv  [label="Individual anomaly\npersonal baseline,\nage-aware fever rule", fillcolor="#fdeee7"];
+    cohort [label="Cohort anomaly\ncount test + drift test\nper class, workplace, care home,\npostal code; population CUSUM", fillcolor="#fdeee7"];
   }
-  subgraph cluster_ag { label="AI agents (prepare, never decide)"; style="rounded,dashed"; color="#9a5b00"; fontsize=10.5; fontcolor="#9a5b00";
+  subgraph cluster_ag { label="Agentic AI layer (agents prepare, never decide)"; style="rounded,dashed"; color="#9a5b00"; fontsize=10.5; fontcolor="#9a5b00";
     tri [label="Triage agent\nurgent first", fillcolor="#fff3df"];
     coh [label="Cohort agent\nlocalize, draft notice", fillcolor="#fff3df"];
   }
