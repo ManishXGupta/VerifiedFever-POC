@@ -197,7 +197,7 @@ def content() -> str:
     x.append(body("Each morning, the count of verified febrile students per class and per school is monitored with a one-sided CUSUM against a trailing 28-day baseline (3-day guard band) and a class-level count threshold; an alert goes to the school nurse and public health, without disclosing individual temperatures."))
 
     x.append(h1("Evaluation"))
-    x.append(body("All experiments were rerun for this version from the open-source code; every value in Tables I\u2013V is generated from the saved results."))
+    x.append(body("All experiments were rerun for this version from the open-source code; every value in Tables I\u2013IV is generated from the saved results."))
     x.append(h2("A. Individual Fever Detection"))
     x.append(body("We simulated 500 students for 90 days: normal temperature N(36.7, 0.25^{2}) \u00b0C clipped to [36.0, 37.4], day-to-day noise 0.15 \u00b0C, measurement noise 0.10 \u00b0C, 0.1 \u00b0C display rounding, fever episodes of 1\u20133 days raising temperature 1.0\u20132.5 \u00b0C above a student\u2019s own normal, and 0.3\u20130.8 \u00b0C transient rises on 3% of other days. The baseline was computed causally ({NSeeds} seeds)."))
     rows = []
@@ -252,17 +252,6 @@ def content() -> str:
     x.append(caption_table("IV", "Tamper-Evidence Tests"))
     x.append(table(["Attack", "Caught by", "Detected"], trows, [130, 70, 40]))
     x.append(note("Fifty enrolled virtual thermometers; 200 trials per attack."))
-
-    x.append(h2("E. Bench Agreement"))
-    x.append(body("Sensor accuracy is tested without human participants: the portable thermometer and a calibrated reference probe are held side by side in a stirred, temperature-controlled water bath at six set points from 36.0 to 40.0 \u00b0C, with at least five paired readings per set point after 2 min stabilization. Agreement is reported as Bland\u2013Altman bias and 95% limits of agreement, and as agreement in classification at the 38.0 \u00b0C cutoff (Table V). [[Fill in Table V after the bench test by running experiments/bench_analysis.py.]]"))
-    brows = [[f"{t} \u00b0C", "[[__]]", "[[__.__]]", "[[__.__]]", "[[\u00b1_.__]]"] for t in ("36.0", "37.0", "37.5", "38.0", "39.0", "40.0")]
-    brows += [["Overall bias (SD)", "[[__]]", "", "", "[[_.__ (_.__)]]"],
-              ["95% limits of agreement", "", "", "", "[[_.__ to _.__]]"],
-              ["Within \u00b10.2 / \u00b10.3 \u00b0C", "", "", "", "[[__% / __%]]"],
-              ["Agreement at 38.0 \u00b0C", "", "", "", "[[__%]]"]]
-    x.append(caption_table("V", "Bench Agreement with a Calibrated Reference"))
-    x.append(table(["Set point", "Pairs", "Ref., \u00b0C", "Device, \u00b0C", "Bias, \u00b0C"], brows, [78, 30, 40, 44, 50]))
-    x.append(note("Thermometer: [[device model]]; reference: [[reference model and accuracy]]. Bias = device \u2212 reference; limits of agreement = bias \u00b1 1.96 SD."))
 
     x.append(h1("Limitations and Conclusion"))
     x.append(body("Detection and outbreak results come from simulation and depend on stated assumptions; savings depend on local prices and policies. Signatures prove a reading came unaltered from an enrolled device, not that the probe was used correctly or not warmed; fever-reducing medicine can mask fever; the proof-of-concept key must move into a secure element; and the system documents fever and does not diagnose it."))
