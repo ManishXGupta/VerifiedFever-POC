@@ -110,7 +110,7 @@ def table(header, rows, widths_pt):
         return (f'<w:tc><w:tcPr><w:tcW w:w="{widths_pt[i]}pt" w:type="dxa"/><w:tcBorders>{bd}</w:tcBorders>'
                 '<w:tcMar><w:top w:w="1pt" w:type="dxa"/><w:start w:w="2.50pt" w:type="dxa"/><w:bottom w:w="1pt" w:type="dxa"/>'
                 '<w:end w:w="2.50pt" w:type="dxa"/></w:tcMar><w:vAlign w:val="center"/></w:tcPr>'
-                f'<w:p><w:pPr><w:jc w:val="{jc}"/></w:pPr>{runs(text, size=14, bold=(r == 0 or b))}</w:p></w:tc>')
+                f'<w:p><w:pPr><w:keepNext/><w:jc w:val="{jc}"/></w:pPr>{runs(text, size=14, bold=(r == 0 or b))}</w:p></w:tc>')
 
     trs = "".join('<w:tr><w:trPr><w:cantSplit/><w:jc w:val="center"/></w:trPr>'
                   + "".join(cell(c, i, r) for i, c in enumerate(row)) + "</w:tr>"
@@ -181,7 +181,7 @@ def content() -> str:
     x.append(body("The 2025\u201326 influenza season hit children hard: in January 2026, children under 18 had the highest peak weekly influenza hospitalization rate observed since 2010\u201311 [1], and their cumulative rate was the second highest since then by March [2]. Schools sit at the center of this burden, yet their attendance rules push families toward clinics for mild illness. Mississippi, for example, now requires medical documentation after a student\u2019s third illness-related absence [3]. A note-only visit costs the visit itself (an average of $220 at urgent care and $224 in primary care [4]), plus a parent\u2019s time, travel and possibly lost pay; about half of lower-income working parents would be highly worried about losing pay to care for a sick child [5]. Time spent seeking care is a recognized economic burden [6], and virtual pediatric care has shown large savings when travel is avoided [7]."))
     x.append(body("Two gaps keep home thermometers out of this loop. First, a consumer reading is not evidence: a typed or edited value looks like a measured one, which is why authenticated sensor provenance is an active topic in medical IoT [8]. Second, fever is usually judged with one fixed cutoff, although normal temperature varies from person to person [9], and wearable temperature studies already use statistical outlier detection alongside fixed thresholds [10]. Meanwhile, school-based influenza surveillance still relies largely on absenteeism data [11], which mixes illness with every other reason a child stays home."))
     x.append(body("This paper makes four contributions: 1) a registered-thermometer evidence format and verifier; 2) a personal-baseline fever rule that keeps the school\u2019s cutoff; 3) a clinician-validated certificate that the family shares directly with the school, in the spirit of verifiable credentials [12], with minimum disclosure; and 4) cohort surveillance on the same verified daily readings, evaluated against absenteeism and confirmed-case reporting. We also quantify cost and time savings and release an open-source proof of concept (Fig. 1)."))
-    x.append(figure("graphical_abstract_column.png", "Overview. A signed home reading becomes a nurse-validated absence certificate that the parent shares directly with the school, and an input to early outbreak alerts. Headline numbers are from Section IV."))
+    x.append(figure("graphical_abstract_column.png", "Overview. A signed home reading becomes a nurse-validated absence certificate that the parent shares directly with the school, and an input to early outbreak alerts. Headline numbers are from Section III."))
 
     x.append(h1("System Design"))
     x.append(body("Fig. 2 shows the architecture and Fig. 3 the user interface of the proof of concept."))
@@ -189,10 +189,9 @@ def content() -> str:
     x.append(body("At enrollment, with parental consent, the school registers a device ID and the device\u2019s Ed25519 public key against one student; the device never sees the student\u2019s identity. Each reading {*device_id*, *seq*, *ts*, *T*, *site*, *nonce*} is canonical JSON, signed ({ReadingBytes} bytes). A reading is accepted only if the device is enrolled and active, any claimed student matches, the signature verifies, *seq* increases (anti-replay), *ts* is fresh (at most 6 h old, 5 min skew) and 34 \u2264 *T* \u2264 43 \u00b0C. The baseline *B* is the median of the last 14 accepted readings below 37.5 \u00b0C (default 36.8 \u00b0C until five exist). A reading is febrile if"))
     x.append(center("*T* \u2265 *T*_{fix}  \u2228  (*T* \u2265 *T*_{floor}  \u2227  *T* \u2212 *B* \u2265 \u0394)        (1)"))
     x.append(body("with the school cutoff *T*_{fix} = 38.0 \u00b0C always honored, *T*_{floor} = 37.5 \u00b0C and \u0394 = 1.0 \u00b0C. Fever at or above 39.5 \u00b0C, or on a third consecutive day, goes to clinical review instead of certification."))
-    x.append(figure("architecture_column.png", "Architecture. Green arrows: the approved certificate returns to the parent\u2019s wallet and is shared directly with the school. Dashed: daily flags feed cohort surveillance.", width_pt=215))
+    x.append(figure("architecture_column.png", "Architecture. Green arrows: the approved certificate returns to the parent\u2019s wallet and is shared directly with the school. Dashed: daily flags feed cohort surveillance.", width_pt=232))
     x.append(h2("B. Certificate, Validation and Direct Sharing"))
     x.append(body("A febrile reading creates or extends a certificate (fever day plus a 24 h fever-free period) holding the student ID, dates, status, validator and a SHA-256 digest of the signed evidence; the service signs it and re-signs it on every change. After one-click validation by a nurse or physician, the certificate appears in the parent\u2019s wallet. The parent shares it with a short code or QR, or as a signed file. The school portal accepts it only if the issuer signature verifies, the status is approved, the record still matches the issuer (not revoked or superseded), the code is unexpired and the student is enrolled; a duplicate is recognized. The school sees the reason (fever-related absence), dates and status, never temperatures."))
-    x.append(figure("ui_column.png", "Proof-of-concept screens: (a) a signed reading of 37.6 \u00b0C is +1.3 \u00b0C above this student\u2019s baseline, so a certificate is created although a 38.0 \u00b0C rule would not flag it; (b) the parent shares the approved certificate by code or QR; (c) nurse validation; (d) the school verifies and accepts it."))
     x.append(h2("C. Cohort Surveillance"))
     x.append(body("Each morning, the count of verified febrile students per class and per school is monitored with a one-sided CUSUM against a trailing 28-day baseline (3-day guard band) and a class-level count threshold; an alert goes to the school nurse and public health, without disclosing individual temperatures."))
 
@@ -205,10 +204,11 @@ def content() -> str:
         v = S["overall"][k]
         rows.append([label, f3(v["sensitivity"][0]), f3(S["by_baseline"][k]["low"]["sensitivity"][0]),
                      f"{v['specificity'][0]:.4f}", f3(v["ppv"][0]), f3(v["f1"][0]), f"{v['false_cert_per_1000'][0]:.1f}"])
+    x.append(body("The fixed 38.0 \u00b0C rule missed many fever days in students with low normal temperatures (Table I, Fig. 4). The personal rule recovered most of them, raising episode detection from {EpiFixed}% to {EpiPers}% while adding less than one false certificate per 1000 student-days; a 37.5 \u00b0C cutoff reached similar sensitivity at {FCLow} false certificates. Across nine settings of inter-individual spread (0.15\u20130.35 \u00b0C) and noise (0.05\u20130.20 \u00b0C), personal-rule sensitivity stayed at {SensRangePers} (fixed 38.0 \u00b0C: {SensRangeFixed})."))
     x.append(caption_table("I", f"Fever-Day Detection (Mean of {syn['n_seeds']} Seeds)"))
     x.append(table(["Rule", "Sens.", "Sens. low", "Spec.", "PPV", "F1", "FC"], rows, [62, 28, 32, 34, 28, 28, 24]))
     x.append(note(f"{S['days_eval']:,} student-days per seed after warm-up. Sens. low: lowest tertile of normal temperature. FC: false certificates per 1000 student-days."))
-    x.append(body("The fixed 38.0 \u00b0C rule missed many fever days in students with low normal temperatures (Table I, Fig. 4). The personal rule recovered most of them, raising episode detection from {EpiFixed}% to {EpiPers}% while adding less than one false certificate per 1000 student-days; a 37.5 \u00b0C cutoff reached similar sensitivity at {FCLow} false certificates. Across nine settings of inter-individual spread (0.15\u20130.35 \u00b0C) and noise (0.05\u20130.20 \u00b0C), personal-rule sensitivity stayed at {SensRangePers} (fixed 38.0 \u00b0C: {SensRangeFixed})."))
+    x.append(figure("ui_column.png", "Proof-of-concept screens: (a) a signed reading of 37.6 \u00b0C is +1.3 \u00b0C above this student\u2019s baseline, so a certificate is created although a 38.0 \u00b0C rule would not flag it; (b) the parent shares the approved certificate by code or QR; (c) nurse validation; (d) the school verifies and accepts it.", width_pt=232))
     x.append(figure("results.png", "Individual detection. (a) Fever-day sensitivity by tertile of normal temperature. (b) False certificates per 1000 student-days."))
 
     x.append(h2("B. Early Outbreak Detection"))
@@ -253,6 +253,21 @@ def content() -> str:
     x.append(table(["Attack", "Caught by", "Detected"], trows, [130, 70, 40]))
     x.append(note("Fifty enrolled virtual thermometers; 200 trials per attack."))
 
+    x.append(h1("Discussion"))
+    x.append(body("The same personal baseline helps at two levels. For a single student it separates a real fever from that student\u2019s normal, which is what makes an automated certificate defensible; for a school it makes the daily count of verified fevers more sensitive, raising outbreak detection from {ObDetFixed}% to {ObDetPers}% at the same false-alarm rate. Absenteeism, by contrast, detected only {ObDetAbs}% of outbreaks because most absences are unrelated to illness, which is consistent with the mixed record of absenteeism-based surveillance [11]."))
+    x.append(body("Deployment needs little new infrastructure. A school needs only the issuer public key to verify a certificate offline, and the service exposes simple interfaces for readings, sharing and school receipt that a student information system can call. Thermometers without signing firmware can still be used through the parent app, but their readings should be marked as lower assurance and always routed to a nurse. The design follows data minimization: the device never learns the student\u2019s identity, the school receives dates and status but no temperatures, and cohort alerts use counts rather than individual records. A deployment should also set a retention period for raw readings and publish it in the consent form."))
+    x.append(body("Table V positions the system against the closest lines of work. School absenteeism surveillance [11] provides cohort alerts but no evidence about individual fevers; wearable temperature monitoring [10] uses statistical deviation but targets clinical settings rather than school documentation; sensor provenance schemes [8] authenticate readings but do not produce a credential an institution can accept; and verifiable credentials [12] provide a privacy-respecting format but no sensing or fever logic. The proposed system combines these elements in one evidence chain from the thermometer to the school."))
+    x.append(caption_table("V", "Comparison with Related Approaches"))
+    yes, no, part = "Yes", "\u2013", "Partly"
+    x.append(table(["Approach", "Signed reading", "Personal baseline", "School certificate", "Outbreak alert"],
+                   [["Absenteeism surveillance [11]", no, no, no, yes],
+                    ["Wearable temperature monitoring [10]", no, part, no, no],
+                    ["IoMT sensor provenance [8]", yes, no, no, no],
+                    ["Verifiable credentials [12]", no, no, part, no],
+                    ["!This work", "!" + yes, "!" + yes, "!" + yes, "!" + yes]],
+                   [92, 36, 40, 40, 34]))
+    x.append(note("Partly: statistical deviation methods in clinical monitoring [10]; a general credential format without fever evidence [12]."))
+    x.append(body("For school policy, a verified certificate could replace a doctor\u2019s note for fevers that stay below the escalation thresholds, while high-grade or repeated fevers still go to a clinician. This keeps the clinical safeguard where it matters and removes visits that exist only to produce paperwork."))
     x.append(h1("Limitations and Conclusion"))
     x.append(body("Detection and outbreak results come from simulation and depend on stated assumptions; savings depend on local prices and policies. Signatures prove a reading came unaltered from an enrolled device, not that the probe was used correctly or not warmed; fever-reducing medicine can mask fever; the proof-of-concept key must move into a secure element; and the system documents fever and does not diagnose it."))
     x.append(body("Within these limits, a registered thermometer turns a routine home measurement into a verifiable certificate that families share directly with schools, saves a clinic visit, and provides an outbreak signal days earlier than existing school data. Next steps are a bench accuracy test against a calibrated reference, Bluetooth firmware signing on a commercial thermometer, and a pilot with school nurses."))
@@ -306,7 +321,15 @@ def main(template: str, output: str):
             ppr = re.search(r"<w:pPr>.*?</w:pPr>", p, re.S).group(0)
             front[k] = f"<w:p>{ppr}<w:r><w:t>Keywords\u2014</w:t></w:r>{runs(KEYWORDS)}</w:p>".replace(RF, "")
 
-    new_body = "".join(front) + content() + final_sect
+    body_xml = content()
+    # balance the columns on the last page: close the 2-column section with a continuous break
+    sect2 = re.sub(r"<w:type [^>]*/>", "", final_sect).replace("<w:sectPr", "<w:sectPr", 1)
+    sect2 = sect2.replace("<w:pgSz", '<w:type w:val="continuous"/><w:pgSz', 1)
+    last_p = body_xml.rfind("<w:p>")
+    body_xml = (body_xml[:last_p] + "<w:p><w:pPr>" + sect2 + "</w:pPr></w:p>" + body_xml[last_p:]) if False else body_xml
+    one_col = re.sub(r"<w:cols [^>]*/>", '<w:cols w:space="18pt"/>', sect2)
+    body_xml += "<w:p><w:pPr>" + sect2 + "</w:pPr></w:p>"
+    new_body = "".join(front) + body_xml + one_col
     docp.write_text(head + "<w:body>" + new_body + "</w:body></w:document>", encoding="utf8")
 
     # media + relationships
