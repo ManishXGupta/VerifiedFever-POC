@@ -1,10 +1,12 @@
 # VerifiedFever POC
 
-**Verified Fever, No Appointment: an IoT portable thermometer for automated digital absence certification and early outbreak alerts in schools.**
+**Verified Fever, No Appointment: a guardrailed agentic AI and IoT thermometer system for digital school absence certificates and early outbreak alerts.**
 
 ![Overview](docs/figures/graphical_abstract.png)
 
 A registered thermometer signs every temperature reading. The service checks that the reading is genuine and compares it with the student's own normal temperature and the school's fever policy. When the criteria are met, it creates a signed digital absence certificate that a nurse or physician approves with one click. The parent then **shares the certificate directly with the school** by code, QR or signed file. The school verifies the signature and accepts it, seeing only the absence dates and status, never temperatures. The same verified daily readings also feed **class- and school-level early outbreak alerts**.
+
+A **guardrailed agentic AI layer** runs the workflow: an orchestrator coordinates intake, certificate, communication and surveillance agents, while a policy guard keeps every approval with a human, blocks disclosure of temperatures or identities, treats user text as data and writes a hash-chained audit log.
 
 This is a small proof of concept for demonstration, and the companion to the IEEE Sensors Letters draft in [`paper/`](paper/). See the [Roadmap](docs/ROADMAP.md) for planned extensions.
 
@@ -15,6 +17,20 @@ This is a small proof of concept for demonstration, and the companion to the IEE
 ![Architecture](docs/figures/architecture.png)
 
 Decision flow for a single reading: [docs/figures/flow.png](docs/figures/flow.png)
+
+## Agentic AI layer
+
+![Agentic architecture](docs/figures/architecture_agentic.png)
+
+| Part | File | What it does |
+|---|---|---|
+| Orchestrator | `verifiedfever/agents.py` | Routes each reading, keeps the nurse queue (clinical-review cases first), runs end-of-day surveillance |
+| Intake agent | `verifiedfever/agents.py` | Verifies and triages a reading with the verifier and rule engine as tools |
+| Certificate agent | `verifiedfever/agents.py` | Prepares a brief for the nurse; cannot approve or reject |
+| Communication agent | `verifiedfever/agents.py` | After human approval, drafts the parent notice and relays the certificate to the school |
+| Surveillance agent | `verifiedfever/surveillance.py`, `agents.py` | CUSUM plus class threshold, localizes the class with the largest excess, attaches a playbook, drafts a counts-only public-health notice |
+| Policy guard + audit log | `verifiedfever/agents.py` | Human-only approval, minimum disclosure per recipient, recipient whitelist, hash-chained log |
+| Drafter | `verifiedfever/agents.py` | Deterministic templates by default; optional LLM drafter (`ANTHROPIC_API_KEY`), whose output passes the same guard |
 
 ## Screens
 
@@ -58,11 +74,12 @@ python experiments/synthetic_eval.py   # individual fever detection, 500 student
 python experiments/outbreak_eval.py    # school outbreak detection, 480 students x 120 days (~3 min)
 python experiments/tamper_eval.py      # 1600 scripted attacks + timing
 python experiments/cost_model.py       # cost and time savings
+python experiments/agent_eval.py       # agent localization, red team, full-term orchestration
 python experiments/make_figures.py && python experiments/make_figures_extra.py
 python experiments/make_tables.py      # LaTeX tables and numbers used in the paper
 python docs/make_screenshots.py        # UI screenshots (needs Playwright + Chrome)
 python docs/make_graphical_abstract.py
-pytest -q                              # 24 tests
+pytest -q                              # 30 tests
 ```
 
 ### 1. Individual fever detection
@@ -100,6 +117,17 @@ Inputs: average urgent care price $220 (HCCI, Jan 2026), average hourly wage $37
 ### 4. Tamper evidence
 
 All 1600 tamper attempts were detected: edited values, back-dated timestamps, replays, impersonation, another student's device, delayed readings, unregistered devices and altered certificates. All 1000 genuine readings were accepted. Median time from reading to certificate is 0.30 ms.
+
+### 5. Agentic orchestration and guardrails
+
+| Measure | Result |
+|---|---|
+| Workflow actions automated (outbreak term) | 98% |
+| Nurse decisions per 1000 student-days | 16 (outbreak term), 13 (outbreak-free term) |
+| Outbreak localized to index class | 49% (n = 152) vs 23% for absence counts (chance 5%) |
+| Guardrail red-team attempts prevented | 350/350 |
+| Alerts in outbreak-free term | 0 |
+| Processing time per reading | 0.31 ms |
 
 The detection, outbreak and cost results come from **simulations with stated assumptions**. They need to be confirmed with real readings.
 

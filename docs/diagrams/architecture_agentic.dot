@@ -1,0 +1,38 @@
+digraph agentic {
+  rankdir=TB; nodesep=0.12; ranksep=0.2; fontname="Helvetica"; newrank=true;
+  node [shape=box, style="rounded,filled", fillcolor="#ffffff", color="#5b6472", fontname="Helvetica", fontsize=11, margin="0.07,0.04"];
+  edge [color="#5b6472", fontname="Helvetica", fontsize=9.5, arrowsize=0.6];
+
+  therm [label="Registered thermometer\nEd25519-signed reading", fillcolor="#e8f1fc"];
+  app   [label="Parent app\nreading relay + certificate wallet", fillcolor="#e8f1fc"];
+
+  subgraph cluster_agents { label="Agentic orchestration layer"; style="rounded,dashed"; color="#1450a3"; fontsize=10.5; fontcolor="#1450a3";
+    orch  [label="Orchestrator\nroutes events, nurse queue by priority", fillcolor="#dbe8fa"];
+    intake [label="Intake agent\nverify + triage", fillcolor="#fdeee7"];
+    cert   [label="Certificate agent\nnurse brief, priority", fillcolor="#fdeee7"];
+    comms  [label="Communication agent\nparent notice, share", fillcolor="#fdeee7"];
+    surv   [label="Surveillance agent\nCUSUM, localize, playbook", fillcolor="#fdeee7"];
+    guard  [label="Policy guard + hash-chained audit log
+human-only approval, minimal disclosure,
+user notes treated as data", fillcolor="#fff3df", color="#9a5b00"];
+  }
+  tools [label="Tools: verifier, baseline rule,
+certificate service", fillcolor="#f3f4f6"];
+  nurse  [label="Nurse / physician\n(human in the loop)", fillcolor="#e6f6ef"];
+  school [label="School portal\nverify + accept", fillcolor="#e6f6ef"];
+  ph     [label="Public health\ncounts only", fillcolor="#f3f4f6"];
+
+  therm -> app [label=" BLE"];
+  app -> orch [label=" HTTPS"];
+  orch -> intake; orch -> cert;
+  {rank=same; intake; cert} {rank=same; comms; surv}
+  intake -> comms [style=invis]; cert -> surv [style=invis];
+  comms -> guard [style=dotted, arrowhead=none]; surv -> guard [style=dotted, arrowhead=none];
+  orch -> tools [dir=both, style=dashed, constraint=false];
+  {rank=same; orch; tools}
+  guard -> nurse [label=" approve / reject"];
+  guard -> school [label=" share", color="#0f7a45", fontcolor="#0f7a45"];
+  guard -> ph [label=" alert", style=dashed];
+  {rank=same; nurse; school; ph}
+
+}

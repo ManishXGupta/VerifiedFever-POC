@@ -45,20 +45,20 @@ h1{{margin:0;font-size:38px;letter-spacing:-.5px}} .sub{{color:#5b6472;font-size
 .foot{{color:#6b7280;font-size:13px;margin-top:12px}}
 </style></head><body><div class="wrap">
 <h1>Verified Fever, No Appointment</h1>
-<div class="sub">A registered thermometer turns a home reading into a verifiable school absence certificate and an early outbreak signal</div>
+<div class="sub">Guardrailed AI agents turn a signed home thermometer reading into a verifiable school absence certificate and an early outbreak signal</div>
 <div class="flow">
 <div class="st">{therm}<b>Measure</b><span>Thermometer signs<br>every daily reading</span></div><div class="arr">&#10140;</div>
-<div class="st">{shield}<b>Verify</b><span>Signature, replay, freshness;<br>personal baseline rule</span></div><div class="arr">&#10140;</div>
+<div class="st">{shield}<b>Agents verify</b><span>Intake agent: signature, replay;<br>personal baseline rule</span></div><div class="arr">&#10140;</div>
 <div class="st">{nurse}<b>Validate</b><span>Nurse or physician<br>approves in one click</span></div><div class="arr">&#10140;</div>
 <div class="st">{phone}<b>Share</b><span>Parent sends code,<br>QR or signed file</span></div><div class="arr">&#10140;</div>
 <div class="st">{school}<b>Accept</b><span>School verifies offline;<br>sees dates + status only</span></div>
-<div class="st" style="flex:1.1;border-color:#bfe6d4">{radar}<b>Early alert</b><span>Class / school trend of<br>verified fevers</span></div>
+<div class="st" style="flex:1.1;border-color:#bfe6d4">{radar}<b>Agent alert</b><span>Surveillance agent finds<br>and localizes outbreaks</span></div>
 </div>
 <div class="kpis">
 <div class="k k1"><div class="v">{sens_low_fixed:.2f} &rarr; {sens_low_pers:.2f}</div><div class="l">fever detection for students with a<br>low normal temperature (vs 38.0 &deg;C)</div></div>
 <div class="k k2"><div class="v">{lead:.0f} days earlier</div><div class="l">outbreak alert than absenteeism or<br>confirmed-case reports (median)</div></div>
 <div class="k k3"><div class="v">${save:.0f}</div><div class="l">saved per avoided note-only visit<br>(visit, parent time, travel)</div></div>
-<div class="k k4"><div class="v">{att}/{att}</div><div class="l">tampering attempts detected;<br>no genuine reading rejected</div></div>
+<div class="k k4"><div class="v">{auto:.0f}% automated</div><div class="l">workflow actions run by agents;<br>{rt}/{rt} guardrail attacks stopped</div></div>
 </div>
 <div class="foot">Detection and outbreak results from simulated cohorts; cost from 2026 price, wage and mileage data with stated assumptions. Open source: github.com/ManishXGupta/VerifiedFever-POC</div>
 </div></body></html>"""
@@ -72,11 +72,14 @@ def main():
     ob = json.loads((RES / "outbreak_results.json").read_text())
     cost = json.loads((RES / "cost_results.json").read_text())
     tam = json.loads((RES / "tamper_results.json").read_text())
+    ag = json.loads((RES / "agent_results.json").read_text())
+    auto = 100 * ag["term_outbreak"]["share_actions_automated"]
+    rt = sum(v["prevented"] for v in ag["red_team"].values())
     att = sum(v["trials"] for v in tam["attacks"].values())
     lead = min(ob["lead_time_vs"]["Absence"]["median_days_earlier"], ob["lead_time_vs"]["Confirmed"]["median_days_earlier"])
     html = HTML.format(**ICONS, sens_low_fixed=syn["by_baseline"]["fixed38"]["low"]["sensitivity"][0],
                        sens_low_pers=syn["by_baseline"]["personal"]["low"]["sensitivity"][0], lead=lead,
-                       save=cost["base"]["per_visit"]["net_saving"], att=att)
+                       save=cost["base"]["per_visit"]["net_saving"], att=att, auto=auto, rt=rt)
     src = ROOT / "docs" / "graphical_abstract.html"
     src.write_text(html)
     from playwright.sync_api import sync_playwright

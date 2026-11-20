@@ -73,6 +73,7 @@ def simulate(seed: int, outbreak: bool, p: dict = P):
     trans = (~febrile_truth) & (rng.random((N, D)) < p["p_transient"])
     rise[trans] = rng.uniform(*p["transient_rise"], int(trans.sum()))
 
+    index_class = -1
     flu_onset = np.full(N, -1)
     flu_febrile = np.zeros(N, dtype=bool)
     sym_onsets: list[int] = []
@@ -81,6 +82,7 @@ def simulate(seed: int, outbreak: bool, p: dict = P):
         inf_day = np.full(N, -1)
         t0 = int(rng.integers(*p["seed_window"]))
         idx = int(rng.integers(N))
+        index_class = int(cls[idx])
         state[idx], inf_day[idx] = 1, t0 - 2
         for t in range(t0 - 2, D):
             # who is infectious and attending today
@@ -129,7 +131,7 @@ def simulate(seed: int, outbreak: bool, p: dict = P):
                 reports[r] += 1
     reports += rng.poisson(p["sporadic_confirmed"] * N, D)
     return dict(cls=cls, mu=mu, temp=temp, took=took, absent=absent, reports=reports,
-                sym_onsets=sym_onsets, n_infected=int((flu_onset >= 0).sum()))
+                sym_onsets=sym_onsets, n_infected=int((flu_onset >= 0).sum()), index_class=index_class)
 
 
 def vf_flags(sim, policy: Policy):

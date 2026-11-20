@@ -28,6 +28,21 @@ syn = json.loads((RES / "synthetic_results.json").read_text())
 ob = json.loads((RES / "outbreak_results.json").read_text())
 cost = json.loads((RES / "cost_results.json").read_text())
 tam = json.loads((RES / "tamper_results.json").read_text())
+ag = json.loads((RES / "agent_results.json").read_text())
+_to, _tn, _loc = ag["term_outbreak"], ag["term_null"], ag["localization"]
+N.update({
+    "AutoPct": f"{100 * _to['share_actions_automated']:.0f}",
+    "HumanPerK": f"{_to['human_per_1000_student_days']:.0f}",
+    "HumanPerKNull": f"{_tn['human_per_1000_student_days']:.0f}",
+    "LocPers": f"{100 * _loc['VF-personal']['rate']:.0f}", "LocPersN": str(_loc["VF-personal"]["n"]),
+    "LocAbs": f"{100 * _loc['Absence']['rate']:.0f}", "LocAbsN": str(_loc["Absence"]["n"]),
+    "LocAbsAtVF": f"{100 * _loc['Absence@VF']['rate']:.0f}", "LocChance": f"{100 * _loc['chance']:.0f}",
+    "RTTotal": str(sum(v["trials"] for v in ag["red_team"].values())),
+    "RTPrevented": str(sum(v["prevented"] for v in ag["red_team"].values())),
+    "TermReadings": f"{_to['readings']:,}", "TermCerts": str(_to["certificates"]),
+    "TermAudit": f"{_to['audit_entries']:,}", "TermMs": f"{_to['ms_per_reading']:.2f}",
+    "NullAlerts": str(_tn["alerts"]), "TermAlerts": str(_to["alerts"]),
+})
 
 COL_PT = 243.0  # column width of the template's two-column body
 RF = '<w:rFonts w:eastAsia="Times New Roman"/>'
@@ -153,23 +168,25 @@ def ref(i, text):
 
 
 # ---------------------------------------------------------------- content
-TITLE = ("Verified Fever, No Appointment: An IoT Portable Thermometer for Automated Digital Absence "
-         "Certification and Early Outbreak Alerts in Schools")
+TITLE = ("Verified Fever, No Appointment: A Guardrailed Agentic AI and IoT Thermometer System for Digital "
+         "School Absence Certificates and Early Outbreak Alerts")
 ABSTRACT = ("Many schools require a doctor\u2019s note after a few illness absences, so families visit a clinic for a mild "
-            "fever only to obtain paperwork. We present a sensor-to-certificate system in which a registered portable "
-            "thermometer signs each daily reading, a verifier rejects altered, replayed, delayed or foreign readings, and "
-            "a rule engine compares each reading with the student\u2019s own baseline and the school\u2019s cutoff. A nurse "
-            "or physician validates the resulting certificate in one click; the parent shares it directly with the school "
-            "by code, QR or signed file, and the school verifies it offline and sees only dates and status. The same "
-            "verified daily readings feed class- and school-level outbreak alerts. In simulation, the personal-baseline "
-            "rule raised fever-day sensitivity for students with low normal temperatures from {SensFixedLow} to "
-            "{SensPersLow} at {FCPers} false certificates per 1000 student-days. In simulated 480-student school terms, "
-            "verified-fever surveillance detected {ObDetPers}% of influenza outbreaks within 21 days, a median "
-            "{ObLeadAbs} days before absenteeism and {ObLeadConf} days before confirmed-case reports. All {NAttacks} "
-            "scripted attacks were detected. Each avoided note-only visit saves about ${CostVisitBase} at 2026 prices "
-            "and wages.")
-KEYWORDS = ("Internet of Things, body temperature sensing, digital signatures, verifiable credentials, school health, "
-            "syndromic surveillance, outbreak detection")
+            "fever only to obtain paperwork, while schools learn of outbreaks late. We present a guardrailed agentic AI "
+            "system built on a registered IoT thermometer that signs every daily reading. An orchestrator coordinates four "
+            "agents that verify and triage each reading against the student\u2019s own baseline, prepare certificates for "
+            "one-click nurse validation, relay approved certificates to the school with minimum disclosure, and watch "
+            "class- and school-level fever counts for outbreaks. A policy guard keeps every approval with a human, blocks "
+            "disclosure of temperatures or identities, treats user text as data, and writes a hash-chained audit log. In "
+            "simulation, the personal-baseline rule raised fever-day sensitivity for students with low normal "
+            "temperatures from {SensFixedLow} to {SensPersLow}. In simulated 480-student school terms, the surveillance "
+            "agent detected {ObDetPers}% of influenza outbreaks within 21 days, a median {ObLeadAbs} days before "
+            "absenteeism and confirmed-case reports, and pointed to the class where the outbreak began in {LocPers}% of "
+            "alerts versus {LocAbs}% for absenteeism. Over a full term the agents automated {AutoPct}% of workflow "
+            "actions, leaving about {HumanPerK} nurse decisions per 1000 student-days; all {RTTotal} guardrail attacks "
+            "and {NAttacks} tampering attempts were stopped. Each avoided note-only visit saves about ${CostVisitBase} "
+            "at 2026 prices and wages.")
+KEYWORDS = ("Agentic AI, multi-agent systems, human-in-the-loop, AI guardrails, Internet of Things, digital signatures, "
+            "syndromic surveillance, school health")
 
 S = syn["summary"]
 f3 = lambda x: f"{x:.3f}"  # noqa: E731
@@ -180,8 +197,9 @@ def content() -> str:
     x.append(h1("Introduction"))
     x.append(body("The 2025\u201326 influenza season hit children hard: in January 2026, children under 18 had the highest peak weekly influenza hospitalization rate observed since 2010\u201311 [1], and their cumulative rate was the second highest since then by March [2]. Schools sit at the center of this burden, yet their attendance rules push families toward clinics for mild illness. Mississippi, for example, now requires medical documentation after a student\u2019s third illness-related absence [3]. A note-only visit costs the visit itself (an average of $220 at urgent care and $224 in primary care [4]), plus a parent\u2019s time, travel and possibly lost pay; about half of lower-income working parents would be highly worried about losing pay to care for a sick child [5]. Time spent seeking care is a recognized economic burden [6], and virtual pediatric care has shown large savings when travel is avoided [7]."))
     x.append(body("Two gaps keep home thermometers out of this loop. First, a consumer reading is not evidence: a typed or edited value looks like a measured one, which is why authenticated sensor provenance is an active topic in medical IoT [8]. Second, fever is usually judged with one fixed cutoff, although normal temperature varies from person to person [9], and wearable temperature studies already use statistical outlier detection alongside fixed thresholds [10]. Meanwhile, school-based influenza surveillance still relies largely on absenteeism data [11], which mixes illness with every other reason a child stays home."))
-    x.append(body("This paper makes four contributions: 1) a registered-thermometer evidence format and verifier; 2) a personal-baseline fever rule that keeps the school\u2019s cutoff; 3) a clinician-validated certificate that the family shares directly with the school, in the spirit of verifiable credentials [12], with minimum disclosure; and 4) cohort surveillance on the same verified daily readings, evaluated against absenteeism and confirmed-case reporting. We also quantify cost and time savings and release an open-source proof of concept (Fig. 1)."))
-    x.append(figure("graphical_abstract_column.png", "Overview. A signed home reading becomes a nurse-validated absence certificate that the parent shares directly with the school, and an input to early outbreak alerts. Headline numbers are from Section III."))
+    x.append(body("Agentic AI offers a way to run this workflow continuously. AI agents have been proposed as always-on assistants for epidemic intelligence that integrate surveillance signals and support decisions [15], and multi-agent orchestration has been applied to real-time outbreak monitoring [16]. In healthcare, however, agents currently operate under near-total human oversight because of safety, regulatory and liability constraints [17]. We therefore design agents that automate the routine work, from checking evidence to watching for outbreaks, while every clinical decision stays with a nurse or physician and every action passes a policy guard."))
+    x.append(body("This paper makes five contributions: 1) a registered-thermometer evidence format and verifier; 2) a personal-baseline fever rule that keeps the school\u2019s cutoff; 3) a clinician-validated certificate that the family shares directly with the school, in the spirit of verifiable credentials [12], with minimum disclosure; 4) a guardrailed multi-agent orchestration layer with a human in the loop and a tamper-evident audit log; and 5) an agentic surveillance service that detects and localizes school outbreaks from the same verified readings, evaluated against absenteeism and confirmed-case reporting. We also quantify cost and time savings and release an open-source proof of concept (Fig. 1)."))
+    x.append(figure("graphical_abstract_column.png", "Overview. Guardrailed agents turn a signed home reading into a nurse-validated absence certificate that the parent shares directly with the school, and into early outbreak alerts. Headline numbers are from Section III."))
 
     x.append(h1("System Design"))
     x.append(body("Fig. 2 shows the architecture and Fig. 3 the user interface of the proof of concept."))
@@ -189,14 +207,15 @@ def content() -> str:
     x.append(body("At enrollment, with parental consent, the school registers a device ID and the device\u2019s Ed25519 public key against one student; the device never sees the student\u2019s identity. Each reading {*device_id*, *seq*, *ts*, *T*, *site*, *nonce*} is canonical JSON, signed ({ReadingBytes} bytes). A reading is accepted only if the device is enrolled and active, any claimed student matches, the signature verifies, *seq* increases (anti-replay), *ts* is fresh (at most 6 h old, 5 min skew) and 34 \u2264 *T* \u2264 43 \u00b0C. The baseline *B* is the median of the last 14 accepted readings below 37.5 \u00b0C (default 36.8 \u00b0C until five exist). A reading is febrile if"))
     x.append(center("*T* \u2265 *T*_{fix}  \u2228  (*T* \u2265 *T*_{floor}  \u2227  *T* \u2212 *B* \u2265 \u0394)        (1)"))
     x.append(body("with the school cutoff *T*_{fix} = 38.0 \u00b0C always honored, *T*_{floor} = 37.5 \u00b0C and \u0394 = 1.0 \u00b0C. Fever at or above 39.5 \u00b0C, or on a third consecutive day, goes to clinical review instead of certification."))
-    x.append(figure("architecture_column.png", "Architecture. Green arrows: the approved certificate returns to the parent\u2019s wallet and is shared directly with the school. Dashed: daily flags feed cohort surveillance.", width_pt=232))
+    x.append(figure("architecture_agentic.png", "Agentic architecture. An orchestrator coordinates four agents that call deterministic tools; a policy guard checks every action and message, keeps approval with a human and logs everything in a hash-chained audit log.", width_pt=236))
     x.append(h2("B. Certificate, Validation and Direct Sharing"))
     x.append(body("A febrile reading creates or extends a certificate (fever day plus a 24 h fever-free period) holding the student ID, dates, status, validator and a SHA-256 digest of the signed evidence; the service signs it and re-signs it on every change. After one-click validation by a nurse or physician, the certificate appears in the parent\u2019s wallet. The parent shares it with a short code or QR, or as a signed file. The school portal accepts it only if the issuer signature verifies, the status is approved, the record still matches the issuer (not revoked or superseded), the code is unexpired and the student is enrolled; a duplicate is recognized. The school sees the reason (fever-related absence), dates and status, never temperatures."))
-    x.append(h2("C. Cohort Surveillance"))
-    x.append(body("Each morning, the count of verified febrile students per class and per school is monitored with a one-sided CUSUM against a trailing 28-day baseline (3-day guard band) and a class-level count threshold; an alert goes to the school nurse and public health, without disclosing individual temperatures."))
+    x.append(h2("C. Agentic Orchestration"))
+    x.append(body("Four agents share the work (Fig. 2). The intake agent verifies and triages each reading using the verifier and rule (1) as tools. The certificate agent prepares a short brief for the nurse and orders the queue so that clinical-review cases come first. After a human decision, the communication agent drafts the parent notice and relays the approved certificate to the school. The surveillance agent watches the daily count of verified fevers per class and per school with a one-sided CUSUM against a trailing 28-day baseline (3-day guard band) and a class-level count threshold; on an alert it localizes the class with the largest excess, attaches a playbook (notify the nurse, remind families of the return rule, clean and ventilate the class, inform public health) and drafts a counts-only notice."))
+    x.append(body("Every agent action and outbound message passes a policy guard that enforces four rules: only a human can approve or reject a certificate; messages to a school may carry only the minimal certificate fields and no temperatures; messages to public health may carry counts and class labels but no student identifiers; and user-supplied free text is stored as data, never followed as an instruction. Allowed and blocked actions alike go to a hash-chained audit log. Messages are drafted by deterministic templates; a large language model can be plugged in as the drafter, and its output passes the same guard."))
 
     x.append(h1("Evaluation"))
-    x.append(body("All experiments use synthetic data generated by the open-source simulator with fixed random seeds, so every value in Tables I\u2013IV can be regenerated exactly from the released code."))
+    x.append(body("All experiments use synthetic data generated by the open-source simulator with fixed random seeds, so every value in Tables I\u2013V can be regenerated exactly from the released code."))
     x.append(h2("A. Individual Fever Detection"))
     x.append(body("We simulated 500 students for 90 days: normal temperature drawn from N(36.7 \u00b0C, (0.25 \u00b0C)^{2}), clipped to [36.0, 37.4], day-to-day noise 0.15 \u00b0C, measurement noise 0.10 \u00b0C, 0.1 \u00b0C display rounding, fever episodes of 1\u20133 days raising temperature 1.0\u20132.5 \u00b0C above a student\u2019s own normal, and 0.3\u20130.8 \u00b0C transient rises on 3% of other days. The baseline was computed causally ({NSeeds} seeds)."))
     rows = []
@@ -223,7 +242,7 @@ def content() -> str:
     x.append(caption_table("II", "School Influenza Outbreak Detection"))
     x.append(table(["Signal", "Detected", "Delay, d", "Cases", "False alarm"], orows, [80, 36, 44, 28, 40]))
     x.append(note(f"{ob['n_eval_outbreak_terms']} outbreak and {ob['n_eval_null_terms']} outbreak-free terms. Detected: within {ob['detect_window_days']} days of the first symptomatic case. Delay: median (IQR) days from that case. Cases: median symptomatic cases by the alert day. False alarm: share of outbreak-free terms with any alert."))
-    x.append(body("Verified-fever surveillance detected the most outbreaks and the earliest (Table II, Fig. 5): a median {ObDelayPers} days after the first symptomatic case, when about {ObCasesPers} children had fallen ill, versus {ObDelayConf} days and {ObCasesConf} cases for confirmed reports. Absenteeism detected only {ObDetAbs}%, because ordinary absences mask the outbreak signal. Among outbreaks detected by both, verified fever alerted a median {ObLeadAbs} days before absenteeism (n = {ObPairsAbs}) and {ObLeadConf} days before confirmed reports (n = {ObPairsConf}). Using the personal rule rather than a fixed 38.0 \u00b0C cutoff raised detection from {ObDetFixed}% to {ObDetPers}%."))
+    x.append(body("Verified-fever surveillance detected the most outbreaks and the earliest (Table II, Fig. 5): a median {ObDelayPers} days after the first symptomatic case, when about {ObCasesPers} children had fallen ill, versus {ObDelayConf} days and {ObCasesConf} cases for confirmed reports. Absenteeism detected only {ObDetAbs}%, because ordinary absences mask the outbreak signal. Among outbreaks detected by both, verified fever alerted a median {ObLeadAbs} days before absenteeism (n = {ObPairsAbs}) and {ObLeadConf} days before confirmed reports (n = {ObPairsConf}). Using the personal rule rather than a fixed 38.0 \u00b0C cutoff raised detection from {ObDetFixed}% to {ObDetPers}%. When it alerted, the surveillance agent pointed to the class where the outbreak began in {LocPers}% of detected outbreaks (n = {LocPersN}), against {LocAbs}% for absence counts at their own alerts (n = {LocAbsN}) and {LocChance}% by chance among 20 classes."))
     x.append(figure("outbreak.png", "Cumulative share of school influenza outbreaks detected by days after the first symptomatic case, at matched false-alarm rates."))
 
     x.append(h2("C. Cost and Time Savings"))
@@ -240,37 +259,45 @@ def content() -> str:
             ["!Annual saving\u2020"] + ["!" + m(C(k)["per_school_year"]["annual_net_saving"]) for k in ks],
             ["Parent hours saved\u2020"] + [f"{C(k)['per_school_year']['parent_hours_saved']:.0f}" for k in ks],
             ["Thermometer payback (yr)"] + [f"{C(k)['per_school_year']['payback_years']:.1f}" for k in ks]]
-    x.append(caption_table("III", "Savings When a Verified Certificate Replaces a Note-Only Visit"))
-    x.append(table(["", "Low", "Base", "High"], crow, [100, 40, 40, 40]))
-    x.append(note("\u2020Per 500-student school per year, with 10/20/30% of students otherwise making one note-only visit. Net of 3 min nurse review; $30 thermometer per student. Wage $37.53/h, vehicle $0.76/mile."))
-
     x.append(h2("D. Tamper Evidence and Timing"))
     trows = [[name.replace("'", "\u2019"), v["expected_check"], f"{v['detected']}/{v['trials']}"] for name, v in tam["attacks"].items()]
     g = tam["genuine"]
     trows.append(["!Genuine readings (accepted)", "\u2013", f"!{g['accepted']}/{g['submitted']}"])
     x.append(body(f"We enrolled 50 virtual thermometers, submitted {g['submitted']} genuine readings and ran 200 trials of each attack in Table IV. Every attack was rejected by the intended check and every genuine reading was accepted; altered shared files were also refused by the school. Median times on a commodity x86-64 machine were {{SignMs}} ms to sign a reading, {{VerifyMs}} ms to verify a signature and {{EtoEMs}} ms (95th percentile {{EtoEPms}} ms) from receiving a reading to issuing a certificate."))
+    x.append(caption_table("III", "Savings When a Verified Certificate Replaces a Note-Only Visit"))
+    x.append(table(["", "Low", "Base", "High"], crow, [100, 40, 40, 40]))
+    x.append(note("\u2020Per 500-student school per year, with 10/20/30% of students otherwise making one note-only visit. Net of 3 min nurse review; $30 thermometer per student. Wage $37.53/h, vehicle $0.76/mile."))
     x.append(caption_table("IV", "Tamper-Evidence Tests"))
     x.append(table(["Attack", "Caught by", "Detected"], trows, [130, 70, 40]))
     x.append(note("Fifty enrolled virtual thermometers; 200 trials per attack."))
 
+    x.append(h2("E. Agentic Orchestration and Guardrails"))
+    x.append(body("We ran one outbreak term and one outbreak-free term end to end through the agent layer: 480 students, 120 school days and {TermReadings} signed readings in the outbreak term, with a nurse deciding every queued certificate each day. The agents performed {AutoPct}% of all workflow actions; the remaining human decisions amounted to about {HumanPerK} per 1000 student-days ({HumanPerKNull} in the outbreak-free term), all of them certificate approvals. Every approved certificate was relayed to and accepted by the school, the guard blocked nothing in normal operation, the {TermAudit} audit entries verified intact, and processing took {TermMs} ms per reading. The surveillance agent raised no alert in the outbreak-free term."))
+    x.append(body("We then red-teamed the guard with {RTTotal} scripted attempts (Table V), including a drafting model that tries to leak a temperature to the school or a student\u2019s name to public health, and an instruction injected into a parent\u2019s note. All were prevented."))
+    rrows = [[k.replace("'", "\u2019"), f"{v['prevented']}/{v['trials']}"] for k, v in ag["red_team"].items()]
+    x.append(caption_table("V", "Guardrail Red-Team Tests"))
+    x.append(table(["Attempt", "Prevented"], rrows, [190, 44]))
+    x.append(note("Fifty trials per attempt; the leaking drafter stands in for a misbehaving language model."))
+
     x.append(h1("Discussion"))
     x.append(body("The same personal baseline helps at two levels. For a single student it separates a real fever from that student\u2019s normal, which is what makes an automated certificate defensible; for a school it makes the daily count of verified fevers more sensitive, raising outbreak detection from {ObDetFixed}% to {ObDetPers}% at the same false-alarm rate. Absenteeism, by contrast, detected only {ObDetAbs}% of outbreaks because most absences are unrelated to illness, which is consistent with the mixed record of absenteeism-based surveillance [11]."))
     x.append(body("Deployment needs little new infrastructure. A school needs only the issuer public key to verify a certificate offline, and the service exposes simple interfaces for readings, sharing and school receipt that a student information system can call. Thermometers without signing firmware can still be used through the parent app, but their readings should be marked as lower assurance and always routed to a nurse. The design follows data minimization: the device never learns the student\u2019s identity, the school receives dates and status but no temperatures, and cohort alerts use counts rather than individual records. A deployment should also set a retention period for raw readings and publish it in the consent form."))
-    x.append(body("Table V positions the system against the closest lines of work. School absenteeism surveillance [11] provides cohort alerts but no evidence about individual fevers; wearable temperature monitoring [10] uses statistical deviation but targets clinical settings rather than school documentation; sensor provenance schemes [8] authenticate readings but do not produce a credential an institution can accept; and verifiable credentials [12] provide a privacy-respecting format but no sensing or fever logic. The proposed system combines these elements in one evidence chain from the thermometer to the school."))
-    x.append(caption_table("V", "Comparison with Related Approaches"))
+    x.append(body("Table VI positions the system against the closest lines of work. School absenteeism surveillance [11] provides cohort alerts but no evidence about individual fevers; wearable temperature monitoring [10] uses statistical deviation but targets clinical settings rather than school documentation; sensor provenance schemes [8] authenticate readings but do not produce a credential an institution can accept; verifiable credentials [12] provide a privacy-respecting format but no sensing or fever logic; and agentic epidemic-intelligence frameworks [15], [16] orchestrate agents over aggregated sources rather than verified individual readings. The proposed system combines these elements in one guardrailed evidence chain from the thermometer to the school."))
+    x.append(caption_table("VI", "Comparison with Related Approaches"))
     yes, no, part = "Yes", "\u2013", "Partly"
-    x.append(table(["Approach", "Signed reading", "Personal baseline", "School certificate", "Outbreak alert"],
-                   [["Absenteeism surveillance [11]", no, no, no, yes],
-                    ["Wearable temperature monitoring [10]", no, part, no, no],
-                    ["IoMT sensor provenance [8]", yes, no, no, no],
-                    ["Verifiable credentials [12]", no, no, part, no],
-                    ["!This work", "!" + yes, "!" + yes, "!" + yes, "!" + yes]],
-                   [92, 36, 40, 40, 34]))
-    x.append(note("Partly: statistical deviation methods in clinical monitoring [10]; a general credential format without fever evidence [12]."))
+    x.append(table(["Approach", "Signed reading", "Personal baseline", "School cert.", "Outbreak alert", "Guarded agents"],
+                   [["Absenteeism surveillance [11]", no, no, no, yes, no],
+                    ["Wearable monitoring [10]", no, part, no, no, no],
+                    ["IoMT sensor provenance [8]", yes, no, no, no, no],
+                    ["Verifiable credentials [12]", no, no, part, no, no],
+                    ["Agentic epidemic intelligence [15], [16]", no, no, no, yes, part],
+                    ["!This work", "!" + yes, "!" + yes, "!" + yes, "!" + yes, "!" + yes]],
+                   [62, 36, 36, 36, 36, 36]))
+    x.append(note("Partly: statistical deviation methods in clinical monitoring [10]; a general credential format without fever evidence [12]; human oversight proposed [15] rather than enforced by a policy guard."))
     x.append(body("For school policy, a verified certificate could replace a doctor\u2019s note for fevers that stay below the escalation thresholds, while high-grade or repeated fevers still go to a clinician. This keeps the clinical safeguard where it matters and removes visits that exist only to produce paperwork."))
     x.append(h1("Limitations and Conclusion"))
-    x.append(body("Detection and outbreak results come from simulation and depend on stated assumptions; savings depend on local prices and policies. Signatures prove a reading came unaltered from an enrolled device, not that the probe was used correctly or not warmed; fever-reducing medicine can mask fever; the proof-of-concept key must move into a secure element; and the system documents fever and does not diagnose it."))
-    x.append(body("Within these limits, a registered thermometer turns a routine home measurement into a verifiable certificate that families share directly with schools, saves a clinic visit, and provides an outbreak signal days earlier than existing school data. Next steps are a bench accuracy test against a calibrated reference, Bluetooth firmware signing on a commercial thermometer, and a pilot with school nurses."))
+    x.append(body("Detection and outbreak results come from simulation and depend on stated assumptions; savings depend on local prices and policies. Signatures prove a reading came unaltered from an enrolled device, not that the probe was used correctly or not warmed; fever-reducing medicine can mask fever; the proof-of-concept key must move into a secure element; and the system documents fever and does not diagnose it. The agents were evaluated with deterministic drafting; a language-model drafter would need its own evaluation, although the guard already constrains what it can send."))
+    x.append(body("Within these limits, guardrailed agents and a registered thermometer turn a routine home measurement into a verifiable certificate that families share directly with schools, saves a clinic visit, and provides an outbreak signal days earlier than existing school data. Next steps are a bench accuracy test against a calibrated reference, Bluetooth firmware signing on a commercial thermometer, and a pilot with school nurses."))
     x.append(body("*Ethics and data availability.* No human participants or personal data were involved; all readings were synthetic. Code, simulation parameters, saved results and the demonstration application are available at https://github.com/ManishXGupta/VerifiedFever-POC."))
     x.append('<w:p><w:pPr><w:keepNext/><w:spacing w:before="8pt" w:after="4pt"/><w:jc w:val="center"/></w:pPr>'
              f'<w:r><w:rPr>{RF}<w:smallCaps/></w:rPr><w:t>References</w:t></w:r></w:p>')
@@ -289,6 +316,9 @@ def content() -> str:
         "W3C Verifiable Credentials Working Group, \u201cVerifiable credentials overview,\u201d W3C Group Note, Jun. 17, 2026.",
         "U.S. Bureau of Labor Statistics, \u201cThe employment situation: May 2026,\u201d USDL-26-0786, Jun. 5, 2026.",
         "Internal Revenue Service, \u201cOptional standard mileage rates,\u201d Announcement 2026-11, Jul. 2026.",
+        "L. Yang, L. Shan, X. Cao *et al.*, \u201cAI agents and epidemic intelligence on respiratory infectious diseases: Toward a conceptual framework integrating decision support,\u201d *J. Med. Internet Res.*, vol. 28, art. e86936, Mar. 2026, doi: 10.2196/86936.",
+        "A. Wattamwar and S. Akwafuo, \u201cARIES: A scalable multi-agent orchestration framework for real-time epidemiological surveillance and outbreak monitoring,\u201d arXiv:2601.01831, Jan. 2026.",
+        "G. Ar\u00e1nguiz Dias *et al.*, \u201cThe doctor will (still) see you now: On the structural limits of agentic AI in healthcare,\u201d arXiv:2602.18460, Feb. 2026.",
     ]
     x += [ref(i + 1, r) for i, r in enumerate(refs)]
     return "".join(x)

@@ -30,6 +30,8 @@ CREATE TABLE IF NOT EXISTS certificates (
   absence_end TEXT NOT NULL, status TEXT NOT NULL, escalated INTEGER NOT NULL DEFAULT 0,
   reasons TEXT NOT NULL, evidence_reading_ids TEXT NOT NULL, evidence_digest TEXT NOT NULL,
   issued_at TEXT NOT NULL, validated_by TEXT, validated_at TEXT, note TEXT, issuer_sig TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS ix_readings_student ON readings(student_id, verdict, ts);
+CREATE INDEX IF NOT EXISTS ix_readings_device ON readings(device_id, verdict);
 CREATE TABLE IF NOT EXISTS shares (
   share_code TEXT PRIMARY KEY, cert_id TEXT NOT NULL, created_at TEXT NOT NULL, expires_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS school_inbox (
