@@ -1,0 +1,31 @@
+digraph architecture_column {
+  rankdir=TB; nodesep=0.14; ranksep=0.2; fontname="Helvetica"; newrank=true;
+  node [shape=box, style="rounded,filled", fillcolor="#ffffff", color="#5b6472", fontname="Helvetica", fontsize=11, margin="0.07,0.04"];
+  edge [color="#5b6472", fontname="Helvetica", fontsize=9.5, arrowsize=0.6];
+
+  subgraph cluster_home { label="Home (parent consent)"; style="rounded,dashed"; color="#9aa3af"; fontsize=10;
+    therm [label="Registered thermometer\nEd25519 key, signs T, ts, seq", fillcolor="#e8f1fc"];
+    app   [label="Parent app\nreading relay + certificate wallet", fillcolor="#e8f1fc"];
+  }
+  subgraph cluster_cloud { label="Certification service"; style="rounded,dashed"; color="#9aa3af"; fontsize=10;
+    verify [label="Evidence verifier\nsignature, sequence, freshness", fillcolor="#fdeee7"];
+    rules  [label="Rule engine\npersonal baseline + cutoff", fillcolor="#fdeee7"];
+    cert   [label="Certificate service\nissuer signature", fillcolor="#fdeee7"];
+    surv   [label="Cohort surveillance\nCUSUM alerts", fillcolor="#fdeee7"];
+  }
+  nurse  [label="Nurse / physician\none-click validation", fillcolor="#e6f6ef"];
+  school [label="School portal\nverify, accept, excuse\n(dates + status only)", fillcolor="#e6f6ef"];
+  ph     [label="School nurse /\npublic health alert", fillcolor="#f3f4f6"];
+
+  therm -> app [label=" BLE"];
+  app -> verify [label=" HTTPS"];
+  verify -> rules [label=" accepted"];
+  rules -> cert [label=" febrile"];
+  rules -> surv [style=dashed];
+  surv -> ph [style=dashed];
+  cert -> nurse;
+  nurse -> app [label=" approved", color="#0f7a45", fontcolor="#0f7a45", constraint=false];
+  app -> school [label=" share: code / QR / file", color="#0f7a45", fontcolor="#0f7a45", constraint=false];
+  {rank=same; cert; surv} {rank=same; nurse; ph}
+  nurse -> school [style=invis];
+}

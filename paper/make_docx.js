@@ -131,7 +131,7 @@ const abstract = `Many schools require a doctor’s note after a few illness abs
 
 const front = [
   new Paragraph({ children: [new TextRun({ text: "IEEE SENSORS LETTERS (DRAFT)", font: FONT, size: 14 })], spacing: { after: 200 } }),
-  new Paragraph({ children: [new TextRun({ text: title, font: FONT, size: 44 })], alignment: AlignmentType.CENTER, spacing: { after: 160 } }),
+  new Paragraph({ children: [new TextRun({ text: title, font: FONT, size: 32 })], alignment: AlignmentType.CENTER, spacing: { after: 120 } }),
   new Paragraph({ children: [new TextRun({ text: "Manish Gupta, ", font: FONT, size: 22 }), new TextRun({ text: "Senior Member, IEEE", font: FONT, size: 22, italics: true })],
     alignment: AlignmentType.CENTER, spacing: { after: 80 } }),
   new Paragraph({ children: [new TextRun({ text: "Design Laboratory Inc., Bellevue, WA, USA · e-mail: ", font: FONT, size: 16 }),
@@ -146,7 +146,7 @@ const front = [
   new Paragraph({ children: [new TextRun({ text: "Index Terms—", font: FONT, size: 18, bold: true, italics: true }),
     ...runs("Sensor applications, body temperature, digital signatures, Internet of Things, school health, syndromic surveillance.", { size: 18, bold: true })],
     alignment: AlignmentType.JUSTIFIED, spacing: { after: 120 } }),
-  ...figure("graphical_abstract.png", 7.0, "Fig. 1.  Overview. A signed home reading becomes a nurse-validated absence certificate that the parent shares directly with the school, and an input to early outbreak alerts. Headline numbers are from Section IV."),
+  ...figure("graphical_abstract_column.png", 3.3, "Fig. 1.  Overview. A signed home reading becomes a nurse-validated absence certificate that the parent shares directly with the school, and an input to early outbreak alerts. Headline numbers are from Section IV."),
 ];
 
 const body1 = [
@@ -171,8 +171,8 @@ const body1b = [
 ];
 
 const wideFigs = [
-  ...figure("architecture.png", 6.8, "Fig. 2.  Architecture. Green arrows: the approved certificate returns to the parent’s wallet and is shared directly with the school. Dashed: daily flags feed cohort surveillance."),
-  ...figure("ui.png", 6.0, "Fig. 3.  Proof-of-concept screens: (a) a signed reading of 37.6 °C is +1.3 °C above this student’s baseline, so a certificate is created although a 38.0 °C rule would not flag it; (b) the parent shares the approved certificate by code or QR; (c) nurse validation; (d) the school verifies and accepts it."),
+  ...figure("architecture_column.png", 3.0, "Fig. 2.  Architecture. Green arrows: the approved certificate returns to the parent’s wallet and is shared directly with the school. Dashed: daily flags feed cohort surveillance."),
+  ...figure("ui_column.png", 3.3, "Fig. 3.  Proof-of-concept screens: (a) a signed reading of 37.6 °C is +1.3 °C above this student’s baseline, so a certificate is created although a 38.0 °C rule would not flag it; (b) the parent shares the approved certificate by code or QR; (c) nurse validation; (d) the school verifies and accepts it."),
 ];
 
 const body2 = [
@@ -197,7 +197,16 @@ const body2 = [
     ["", "Low", "Base", "High"], costRows, [2100, 750, 750, 750],
     "†Per 500-student school per year, with 10/20/30% of students otherwise making one note-only visit. Net of 3 min nurse review; $30 thermometer per student. Wage $37.53/h, vehicle $0.76/mile."),
   H2("D", "Tamper Evidence, Timing and Bench Agreement"),
-  P("With 50 enrolled virtual thermometers, all 200 trials of each of seven reading attacks (edited value, back-dated timestamp, replay, non-enrolled key, another student’s device, delayed reading, unregistered device) and of certificate alteration were rejected, and all 1000 genuine readings were accepted. Altered shared files were refused by the school. Median times on a commodity x86-64 machine were {VerifyMs} ms to verify a signature and {EtoEMs} ms from reading to certificate. Sensor agreement is tested on a bench, with the thermometer and a calibrated reference in a stirred water bath at six set points from 36.0 to 40.0 °C, reporting bias, limits of agreement and classification at 38.0 °C. [[[Insert bench results.]]]"),
+  P("With 50 enrolled virtual thermometers, all 200 trials of each of seven reading attacks (edited value, back-dated timestamp, replay, non-enrolled key, another student’s device, delayed reading, unregistered device) and of certificate alteration were rejected, and all 1000 genuine readings were accepted. Altered shared files were refused by the school. Median times on a commodity x86-64 machine were {VerifyMs} ms to verify a signature and {EtoEMs} ms from reading to certificate. Sensor agreement is tested on a bench, with the thermometer and a calibrated reference in a stirred water bath at six set points from 36.0 to 40.0 °C, reporting bias, limits of agreement and classification at 38.0 °C (Table IV). [[Fill in Table IV after the bench test (run experiments/bench_analysis.py).]]"),
+  ...table("TABLE IV  ·  BENCH AGREEMENT: PORTABLE THERMOMETER VS CALIBRATED REFERENCE (WATER BATH)",
+    ["Set point", "Pairs", "Reference, °C", "Device, °C", "Bias, °C"],
+    [...["36.0", "37.0", "37.5", "38.0", "39.0", "40.0"].map((t) => [t + " °C", "[[__]]", "[[__.__]]", "[[__.__]]", "[[±_.__]]"]),
+     ["Overall bias (SD)", "[[__]]", "", "", "[[_.__ (_.__)]]"],
+     ["95% limits of agreement", "", "", "", "[[_.__ to _.__]]"],
+     ["Within ±0.2 °C / ±0.3 °C", "", "", "", "[[__% / __%]]"],
+     ["Agreement at 38.0 °C cutoff", "", "", "", "[[__%]]"]],
+    [1500, 520, 820, 760, 860],
+    "Thermometer: [[device model]]; reference: [[reference model and accuracy]]. At least five paired readings per set point after 2 min stabilization. Bias = device − reference; limits of agreement = bias ± 1.96 SD (Bland–Altman)."),
   H1("IV", "Limitations and Conclusion"),
   P("Detection and outbreak results come from simulation and depend on stated assumptions; savings depend on local prices and policies. Signatures prove a reading came unaltered from an enrolled device, not that the probe was used correctly or not warmed; fever-reducing medicine can mask fever; the POC key must move into a secure element; the system documents fever and does not diagnose. Within these limits, a registered thermometer turns a routine home measurement into a verifiable certificate that families share directly with schools, saves a clinic visit, and provides an outbreak signal days earlier than existing school data. Next steps are the bench test, BLE firmware signing and a pilot with school nurses."),
   new Paragraph({ children: [new TextRun({ text: "REFERENCES", font: FONT, size: BODY })], alignment: AlignmentType.CENTER, spacing: { before: 200, after: 80 } }),
@@ -231,10 +240,7 @@ const doc = new Document({
   creator: "Manish Gupta", title,
   styles: { default: { document: { run: { font: FONT, size: BODY } } } },
   sections: [
-    { properties: { page }, footers: footer, children: front },
-    { properties: { page, type: SectionType.CONTINUOUS, column: twoCol }, footers: footer, children: body1 },
-    { properties: { page, type: SectionType.CONTINUOUS }, footers: footer, children: wideFigs },
-    { properties: { page, type: SectionType.CONTINUOUS, column: twoCol }, footers: footer, children: [...body1b, ...body2, ...refs] },
+    { properties: { page, column: twoCol }, footers: footer, children: [...front, ...body1, ...body1b, ...wideFigs, ...body2, ...refs] },
   ],
 });
 

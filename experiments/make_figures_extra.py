@@ -70,3 +70,25 @@ if __name__ == "__main__":
     ui_figure()
     outbreak_figure()
     print("extra figures written")
+
+
+def ui_column_figure():
+    """Column-width (single column) version of the UI figure: phones on top, nurse and school below."""
+    fig = plt.figure(figsize=(3.4, 4.9))
+    gs = fig.add_gridspec(3, 2, height_ratios=[2.35, 0.62, 0.72], hspace=0.22, wspace=0.05)
+    spec = [("parent_reading.png", "(a) Signed reading", gs[0, 0]),
+            ("parent_share.png", "(b) Share: code / QR", gs[0, 1]),
+            ("nurse.png", "(c) Nurse one-click validation", gs[1, :]),
+            ("school.png", "(d) School verifies and accepts", gs[2, :])]
+    for f, title, spot in spec:
+        ax = fig.add_subplot(spot)
+        ax.imshow(mpimg.imread(SCR / f))
+        ax.set_title(title, fontsize=6.5, loc="left", color=INK, pad=2)
+        ax.axis("off")
+    fig.subplots_adjust(left=0.01, right=0.99, top=0.97, bottom=0.01)
+    fig.savefig(DOCS / "ui_column.png", dpi=400)
+    plt.close(fig)
+
+
+if __name__ == "__main__":
+    ui_column_figure()

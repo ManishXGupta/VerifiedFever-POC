@@ -87,6 +87,18 @@ def main():
         el = pg.locator(".wrap")
         el.screenshot(path=str(ROOT / "docs" / "figures" / "graphical_abstract.png"))
         el.screenshot(path=str(ROOT / "paper" / "figures" / "graphical_abstract.png"))
+        # column-width variant: 3 x 2 stage grid and 2 x 2 headline tiles
+        col_css = ("<style>.wrap{width:860px;padding:26px 28px}h1{font-size:34px}.sub{font-size:17px}"
+                   ".flow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}.arr{display:none}"
+                   ".st{flex:none!important;padding:12px 8px;min-width:0}"
+                   ".st svg{width:60px;height:60px}.st b{font-size:19px}.st span{font-size:14px}"
+                   ".kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px}.k{box-sizing:border-box}"
+                   ".k .v{font-size:32px}.k .l{font-size:14.5px}.foot{font-size:12.5px}</style></head>")
+        col = ROOT / "docs" / "graphical_abstract_column.html"
+        col.write_text(html.replace("</head>", col_css, 1))
+        pg2 = b.new_page(viewport={"width": 860, "height": 900}, device_scale_factor=3)
+        pg2.goto(col.as_uri())
+        pg2.locator(".wrap").screenshot(path=str(ROOT / "docs" / "figures" / "graphical_abstract_column.png"))
         b.close()
     print("graphical abstract written")
 
