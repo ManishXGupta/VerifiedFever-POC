@@ -78,15 +78,15 @@
   "timing": {
     "sign_reading": {
       "median_ms": 0.034,
-      "p95_ms": 0.049
+      "p95_ms": 0.042
     },
     "verify_signature": {
       "median_ms": 0.096,
-      "p95_ms": 0.121
+      "p95_ms": 0.114
     },
     "end_to_end_reading_to_certificate": {
-      "median_ms": 0.298,
-      "p95_ms": 0.346
+      "median_ms": 0.295,
+      "p95_ms": 0.34
     },
     "signed_reading_bytes": 245,
     "platform": "Linux x86_64, Python 3.13.18"
