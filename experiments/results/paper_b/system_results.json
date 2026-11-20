@@ -1,0 +1,68 @@
+{
+  "red_team": {
+    "identifier to public health": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "temperature to public health": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "group under small-cell limit": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "recipient outside policy": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "agent makes clinical decision": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "agent confirms outbreak alert": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "physician reads non-consenting patient": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "other physician reads patient": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "instruction injected in note": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "tampered reading": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "replayed reading": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "unregistered device": {
+      "trials": 50,
+      "prevented": 50
+    },
+    "reading after withdrawal": {
+      "trials": 50,
+      "prevented": 50
+    }
+  },
+  "audit_chain_ok": true,
+  "total_attempts": 650,
+  "total_prevented": 650,
+  "throughput": {
+    "participants": 3000,
+    "days": 21,
+    "ms_per_reading_median": 0.162,
+    "ms_per_reading_p95": 0.211,
+    "readings_per_hour_one_core": 22157118,
+    "daily_surveillance_seconds": 0.078,
+    "groups": 130
+  }
+}

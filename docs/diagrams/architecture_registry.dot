@@ -1,0 +1,34 @@
+digraph registry {
+  rankdir=TB; nodesep=0.35; ranksep=0.28; fontname="Helvetica"; newrank=true;
+  node [shape=box, style="rounded,filled", fillcolor="#ffffff", color="#5b6472", fontname="Helvetica", fontsize=11, margin="0.09,0.05"];
+  edge [color="#5b6472", fontname="Helvetica", fontsize=9.5, arrowsize=0.6];
+
+  person [label="Person\nregistered thermometer\n(one signed reading a day)", fillcolor="#e8f1fc"];
+  consent [label="Consent manager\nmonitoring / cohort / physician\nwithdraw = stop + erase", fillcolor="#e8f1fc"];
+
+  subgraph cluster_reg { label="Secure registry"; style="rounded,dashed"; color="#1450a3"; fontsize=10.5; fontcolor="#1450a3";
+    verify [label="Verify\nsignature, device, replay,\nfreshness, consent", fillcolor="#dbe8fa"];
+    indiv  [label="Individual layer\npersonal baseline,\nage-aware fever rule", fillcolor="#fdeee7"];
+    cohort [label="Cohort layer\ncount test + drift test\nper class, workplace, care home,\npostal code; population CUSUM", fillcolor="#fdeee7"];
+  }
+  subgraph cluster_ag { label="AI agents (prepare, never decide)"; style="rounded,dashed"; color="#9a5b00"; fontsize=10.5; fontcolor="#9a5b00";
+    tri [label="Triage agent\nurgent first", fillcolor="#fff3df"];
+    coh [label="Cohort agent\nlocalize, draft notice", fillcolor="#fff3df"];
+  }
+  guard [label="Policy guard + hash-chained audit log\nhuman-only decisions, consent checks,\ncounts only and small cells suppressed\nfor public health", fillcolor="#fff7e8", color="#9a5b00"];
+  doc [label="Physician\ntrajectory + cohort comparison\n(human decision)", fillcolor="#e6f6ef"];
+  ph  [label="Public health\nconfirmed alerts,\ngroup counts only", fillcolor="#e6f6ef"];
+
+  person -> verify [label=" HTTPS"];
+  consent -> verify [style=dashed];
+  verify -> indiv; verify -> cohort;
+  indiv -> cohort [style=dotted, arrowhead=none, label=" flags, deviations"];
+  {rank=same; indiv; cohort}
+  {rank=same; tri; coh}
+  {rank=same; person; consent}
+  indiv -> tri; cohort -> coh;
+  tri -> guard; coh -> guard;
+  guard -> doc [label=" queue"];
+  guard -> ph [label=" after human\n confirmation", style=dashed];
+  {rank=same; doc; ph}
+}

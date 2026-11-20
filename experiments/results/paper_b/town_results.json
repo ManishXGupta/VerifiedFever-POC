@@ -1,0 +1,2438 @@
+{
+ "params": {
+  "N": 12000,
+  "n_postal": 30,
+  "class_size": 25,
+  "n_work": 100,
+  "n_care": 6,
+  "care_size": 60,
+  "D": 120,
+  "warmup": 28,
+  "p_bg_resp": 0.0004,
+  "seed_window": [
+   35,
+   90
+  ],
+  "n_index": 2,
+  "beta": {
+   "class": 0.55,
+   "workplace": 0.4,
+   "care_home": 0.6
+  },
+  "beta_postal": 0.05,
+  "beta_town": 0.025,
+  "p_symptomatic": 0.75,
+  "p_isolate": 0.7,
+  "latent": [
+   1,
+   2
+  ],
+  "p_seek": 0.35,
+  "seek_delay": [
+   1,
+   3
+  ],
+  "p_test": 0.5,
+  "lab_delay": [
+   3,
+   6
+  ],
+  "sporadic_lab": 0.03
+ },
+ "n_test_null": 300,
+ "n_test_outbreak": 300,
+ "n_evaluable_outbreaks": 250,
+ "n_fizzled": 50,
+ "n_settings": {
+  "class": 106,
+  "workplace": 100,
+  "care_home": 6
+ },
+ "summary": {
+  "reg": {
+   "params": [
+    1e-06,
+    4.5,
+    8
+   ],
+   "false_alarm_terms": 0.11,
+   "detected": 0.42,
+   "median_delay_days": 9.0,
+   "iqr_delay": [
+    5.0,
+    16.0
+   ],
+   "median_cases_at_alert": 14.0,
+   "localized_exact_setting": 0.495,
+   "localized_setting_type": 0.714,
+   "localized_index_postal": 0.0,
+   "n_localized": 105
+  },
+  "reg_nodrift": {
+   "params": [
+    1e-05,
+    1000000000.0,
+    8
+   ],
+   "false_alarm_terms": 0.07,
+   "detected": 0.296,
+   "median_delay_days": 13.0,
+   "iqr_delay": [
+    6.0,
+    18.0
+   ],
+   "median_cases_at_alert": 23.0,
+   "localized_exact_setting": 0.351,
+   "localized_setting_type": 0.595,
+   "localized_index_postal": 0.0,
+   "n_localized": 74
+  },
+  "reg_fixed": {
+   "params": [
+    1e-05,
+    1000000000.0,
+    10
+   ],
+   "false_alarm_terms": 0.073,
+   "detected": 0.28,
+   "median_delay_days": 13.0,
+   "iqr_delay": [
+    9.0,
+    18.0
+   ],
+   "median_cases_at_alert": 27.5,
+   "localized_exact_setting": 0.257,
+   "localized_setting_type": 0.543,
+   "localized_index_postal": 0.0,
+   "n_localized": 70
+  },
+  "syn": {
+   "params": [
+    0.0001,
+    8
+   ],
+   "false_alarm_terms": 0.08,
+   "detected": 0.072,
+   "median_delay_days": 17.0,
+   "iqr_delay": [
+    15.0,
+    19.75
+   ],
+   "median_cases_at_alert": 54.0,
+   "localized_exact_setting": null,
+   "localized_setting_type": null,
+   "localized_index_postal": 0.0,
+   "n_localized": 18
+  },
+  "lab": {
+   "params": [
+    3
+   ],
+   "false_alarm_terms": 0.043,
+   "detected": 0.416,
+   "median_delay_days": 14.0,
+   "iqr_delay": [
+    11.0,
+    16.0
+   ],
+   "median_cases_at_alert": 21.5,
+   "localized_exact_setting": null,
+   "localized_setting_type": null,
+   "localized_index_postal": null,
+   "n_localized": 0
+  }
+ },
+ "by_seed_type": {
+  "class": {
+   "n": 122,
+   "reg": 0.459,
+   "reg_nodrift": 0.27,
+   "reg_fixed": 0.262,
+   "syn": 0.025,
+   "lab": 0.426
+  },
+  "workplace": {
+   "n": 72,
+   "reg": 0.361,
+   "reg_nodrift": 0.306,
+   "reg_fixed": 0.333,
+   "syn": 0.069,
+   "lab": 0.361
+  },
+  "care_home": {
+   "n": 56,
+   "reg": 0.411,
+   "reg_nodrift": 0.339,
+   "reg_fixed": 0.25,
+   "syn": 0.179,
+   "lab": 0.464
+  }
+ },
+ "registry_lead": {
+  "syn": {
+   "n": 17,
+   "median_days_earlier": 7.0
+  },
+  "lab": {
+   "n": 50,
+   "median_days_earlier": 6.0
+  }
+ },
+ "outbreak_size_median": 308.0,
+ "outbreak_size_iqr": [
+  57.75,
+  861.75
+ ],
+ "per_outbreak": [
+  {
+   "seed_type": "workplace",
+   "n_infected": 160,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 3603,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 3281,
+   "reg": 18,
+   "reg_nodrift": 18,
+   "reg_fixed": 18,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 208,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 194,
+   "reg": 21,
+   "reg_nodrift": 21,
+   "reg_fixed": 20,
+   "syn": null,
+   "lab": 21
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 215,
+   "reg": 18,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 12,
+   "reg": 1,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 15,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 327,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 38,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 9
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 57,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 687,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 11,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 10
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 203,
+   "reg": 14,
+   "reg_nodrift": 14,
+   "reg_fixed": 14,
+   "syn": null,
+   "lab": 18
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 1709,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 1
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 517,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 804,
+   "reg": 5,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 14
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 26,
+   "reg": 11,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 17
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 13,
+   "reg": 6,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 454,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 14,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 10
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 9,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 106,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 454,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 205,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 14
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 11,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 1286,
+   "reg": 21,
+   "reg_nodrift": 21,
+   "reg_fixed": 6,
+   "syn": null,
+   "lab": 7
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 553,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 2189,
+   "reg": 20,
+   "reg_nodrift": 20,
+   "reg_fixed": 14,
+   "syn": 20,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 728,
+   "reg": 9,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 3334,
+   "reg": 7,
+   "reg_nodrift": 20,
+   "reg_fixed": 21,
+   "syn": 16,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 61,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 15
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 14,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 1412,
+   "reg": 7,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 2883,
+   "reg": 17,
+   "reg_nodrift": 17,
+   "reg_fixed": 20,
+   "syn": 17,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 193,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 16,
+   "reg": 3,
+   "reg_nodrift": 3,
+   "reg_fixed": 3,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 2317,
+   "reg": 20,
+   "reg_nodrift": 17,
+   "reg_fixed": 11,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 412,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 5,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 9,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 10,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 1749,
+   "reg": 13,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 9
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 2846,
+   "reg": 17,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 8,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 967,
+   "reg": 1,
+   "reg_nodrift": 1,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 519,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 10
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 595,
+   "reg": 5,
+   "reg_nodrift": 5,
+   "reg_fixed": 5,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 781,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 153,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 9
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 893,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": 8,
+   "syn": null,
+   "lab": 12
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 373,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 96,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 1431,
+   "reg": 19,
+   "reg_nodrift": 21,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 2245,
+   "reg": 11,
+   "reg_nodrift": 20,
+   "reg_fixed": 20,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 128,
+   "reg": 20,
+   "reg_nodrift": null,
+   "reg_fixed": 21,
+   "syn": null,
+   "lab": 11
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 6,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 353,
+   "reg": 2,
+   "reg_nodrift": 2,
+   "reg_fixed": 2,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 1601,
+   "reg": 6,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 15
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 29,
+   "reg": 14,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 405,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 126,
+   "reg": 17,
+   "reg_nodrift": 18,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 1590,
+   "reg": 19,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 14
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 25,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 786,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 45,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 14
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 1081,
+   "reg": 6,
+   "reg_nodrift": 6,
+   "reg_fixed": 6,
+   "syn": null,
+   "lab": 9
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 2160,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": 19,
+   "syn": null,
+   "lab": 5
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 152,
+   "reg": 19,
+   "reg_nodrift": 19,
+   "reg_fixed": 20,
+   "syn": 3,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 575,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 20,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 82,
+   "reg": 3,
+   "reg_nodrift": 3,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 8,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 1194,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 11
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 632,
+   "reg": 21,
+   "reg_nodrift": 21,
+   "reg_fixed": 17,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 1821,
+   "reg": null,
+   "reg_nodrift": 14,
+   "reg_fixed": 14,
+   "syn": null,
+   "lab": 2
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 639,
+   "reg": 12,
+   "reg_nodrift": 12,
+   "reg_fixed": 12,
+   "syn": 21,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 762,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 22,
+   "reg": 2,
+   "reg_nodrift": 2,
+   "reg_fixed": 3,
+   "syn": null,
+   "lab": 10
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 863,
+   "reg": 18,
+   "reg_nodrift": 18,
+   "reg_fixed": 19,
+   "syn": null,
+   "lab": 16
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 2185,
+   "reg": 2,
+   "reg_nodrift": 2,
+   "reg_fixed": 19,
+   "syn": 19,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 2259,
+   "reg": 7,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 2971,
+   "reg": 19,
+   "reg_nodrift": 13,
+   "reg_fixed": 19,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 194,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 170,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 11
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 2125,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 343,
+   "reg": 9,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 14
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 2236,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 2
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 2067,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 525,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 221,
+   "reg": 15,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 17
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 221,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 17
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 57,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 20
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 703,
+   "reg": 21,
+   "reg_nodrift": 21,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 15
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 231,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 19
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 497,
+   "reg": 16,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 19
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 434,
+   "reg": 2,
+   "reg_nodrift": 2,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 9
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 229,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 33,
+   "reg": 1,
+   "reg_nodrift": 3,
+   "reg_fixed": 3,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 100,
+   "reg": 11,
+   "reg_nodrift": 11,
+   "reg_fixed": 12,
+   "syn": null,
+   "lab": 16
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 709,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 19
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 9,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 1082,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 16
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 90,
+   "reg": 2,
+   "reg_nodrift": 2,
+   "reg_fixed": 2,
+   "syn": null,
+   "lab": 15
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 1288,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 1258,
+   "reg": 2,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 18
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 237,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 15
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 14,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 353,
+   "reg": null,
+   "reg_nodrift": 21,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 75,
+   "reg": 5,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 14
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 57,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 715,
+   "reg": 12,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 14,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 555,
+   "reg": 5,
+   "reg_nodrift": 12,
+   "reg_fixed": 12,
+   "syn": null,
+   "lab": 15
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 1887,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": 6,
+   "lab": 4
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 101,
+   "reg": 13,
+   "reg_nodrift": 13,
+   "reg_fixed": 13,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 530,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 16,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 48,
+   "reg": 9,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 15
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 5,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 897,
+   "reg": 7,
+   "reg_nodrift": 21,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 7,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 11,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 6,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 468,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 12,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 343,
+   "reg": 20,
+   "reg_nodrift": 20,
+   "reg_fixed": 20,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 13,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 1624,
+   "reg": 19,
+   "reg_nodrift": 12,
+   "reg_fixed": 12,
+   "syn": 21,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 236,
+   "reg": 6,
+   "reg_nodrift": 12,
+   "reg_fixed": 10,
+   "syn": null,
+   "lab": 11
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 32,
+   "reg": 5,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 19
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 589,
+   "reg": 14,
+   "reg_nodrift": 15,
+   "reg_fixed": 15,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 40,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 18
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 478,
+   "reg": 1,
+   "reg_nodrift": 5,
+   "reg_fixed": 13,
+   "syn": null,
+   "lab": 14
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 23,
+   "reg": 6,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 611,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 78,
+   "reg": 14,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 12,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 3369,
+   "reg": 9,
+   "reg_nodrift": 9,
+   "reg_fixed": 9,
+   "syn": 19,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 42,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 19
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 157,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": 6,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 314,
+   "reg": 12,
+   "reg_nodrift": 12,
+   "reg_fixed": 4,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 1456,
+   "reg": 20,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 343,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 2977,
+   "reg": 20,
+   "reg_nodrift": 20,
+   "reg_fixed": 11,
+   "syn": 21,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 1076,
+   "reg": 19,
+   "reg_nodrift": 19,
+   "reg_fixed": 19,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 81,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 14
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 858,
+   "reg": 7,
+   "reg_nodrift": 16,
+   "reg_fixed": 9,
+   "syn": null,
+   "lab": 14
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 94,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 397,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 18
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 63,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 93,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 1225,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 2219,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 182,
+   "reg": 19,
+   "reg_nodrift": 19,
+   "reg_fixed": 19,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 97,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": 8,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 946,
+   "reg": null,
+   "reg_nodrift": 10,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 14
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 169,
+   "reg": 13,
+   "reg_nodrift": 13,
+   "reg_fixed": 9,
+   "syn": 20,
+   "lab": 3
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 1539,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 16
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 650,
+   "reg": 3,
+   "reg_nodrift": 19,
+   "reg_fixed": 18,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 260,
+   "reg": 6,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 13,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 2554,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 12
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 69,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 235,
+   "reg": 6,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 60,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 11
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 88,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 20
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 32,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 437,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 18
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 986,
+   "reg": 17,
+   "reg_nodrift": 17,
+   "reg_fixed": null,
+   "syn": 17,
+   "lab": 16
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 427,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 18
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 215,
+   "reg": 14,
+   "reg_nodrift": 14,
+   "reg_fixed": 14,
+   "syn": 15,
+   "lab": 17
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 3243,
+   "reg": 13,
+   "reg_nodrift": 14,
+   "reg_fixed": 14,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 2325,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 920,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 314,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 17
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 440,
+   "reg": 6,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 12
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 504,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 1518,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 848,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 128,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 12
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 16,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 146,
+   "reg": 7,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": 16,
+   "lab": 20
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 44,
+   "reg": 8,
+   "reg_nodrift": 8,
+   "reg_fixed": 6,
+   "syn": null,
+   "lab": 18
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 16,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 753,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 17
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 416,
+   "reg": 4,
+   "reg_nodrift": 4,
+   "reg_fixed": 20,
+   "syn": null,
+   "lab": 17
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 652,
+   "reg": 3,
+   "reg_nodrift": null,
+   "reg_fixed": 3,
+   "syn": null,
+   "lab": 10
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 26,
+   "reg": 11,
+   "reg_nodrift": 11,
+   "reg_fixed": 11,
+   "syn": null,
+   "lab": 20
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 3524,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 899,
+   "reg": 9,
+   "reg_nodrift": 11,
+   "reg_fixed": 11,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 533,
+   "reg": 16,
+   "reg_nodrift": 16,
+   "reg_fixed": 15,
+   "syn": null,
+   "lab": 19
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 2353,
+   "reg": 2,
+   "reg_nodrift": 18,
+   "reg_fixed": 19,
+   "syn": null,
+   "lab": 2
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 10,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 1575,
+   "reg": 6,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 601,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 77,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 77,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 235,
+   "reg": 5,
+   "reg_nodrift": 5,
+   "reg_fixed": null,
+   "syn": 11,
+   "lab": 14
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 25,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 19,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 166,
+   "reg": 21,
+   "reg_nodrift": 21,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 15
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 84,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 539,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": 12,
+   "syn": null,
+   "lab": 12
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 411,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 11
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 20,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": 12,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 842,
+   "reg": 16,
+   "reg_nodrift": 16,
+   "reg_fixed": 16,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 24,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 2163,
+   "reg": 12,
+   "reg_nodrift": 12,
+   "reg_fixed": 14,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 24,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 640,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 112,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 19,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 2254,
+   "reg": 5,
+   "reg_nodrift": 5,
+   "reg_fixed": 6,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 104,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 13
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 429,
+   "reg": 12,
+   "reg_nodrift": 12,
+   "reg_fixed": 19,
+   "syn": null,
+   "lab": 16
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 526,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 39,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 385,
+   "reg": 6,
+   "reg_nodrift": 6,
+   "reg_fixed": 6,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 370,
+   "reg": 4,
+   "reg_nodrift": 4,
+   "reg_fixed": 15,
+   "syn": null,
+   "lab": 14
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 144,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 156,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 884,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 6
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 302,
+   "reg": 16,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 727,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 7
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 241,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 12
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 15,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 86,
+   "reg": 8,
+   "reg_nodrift": 8,
+   "reg_fixed": 18,
+   "syn": 15,
+   "lab": 12
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 120,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 130,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 1009,
+   "reg": 12,
+   "reg_nodrift": 15,
+   "reg_fixed": 14,
+   "syn": 19,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 983,
+   "reg": 5,
+   "reg_nodrift": 5,
+   "reg_fixed": 15,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 2032,
+   "reg": 15,
+   "reg_nodrift": 15,
+   "reg_fixed": 19,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 61,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 2032,
+   "reg": 9,
+   "reg_nodrift": 9,
+   "reg_fixed": 9,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 24,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 31,
+   "reg": 2,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": 12,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 196,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 10,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 3434,
+   "reg": 6,
+   "reg_nodrift": 6,
+   "reg_fixed": 6,
+   "syn": null,
+   "lab": 12
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 495,
+   "reg": 3,
+   "reg_nodrift": 3,
+   "reg_fixed": 11,
+   "syn": null,
+   "lab": 16
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 1055,
+   "reg": 8,
+   "reg_nodrift": null,
+   "reg_fixed": 15,
+   "syn": null,
+   "lab": 6
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 26,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 245,
+   "reg": 9,
+   "reg_nodrift": 12,
+   "reg_fixed": 12,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 2308,
+   "reg": 10,
+   "reg_nodrift": 20,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "workplace",
+   "n_infected": 138,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 12
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 392,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": 15
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 8,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "care_home",
+   "n_infected": 1245,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  },
+  {
+   "seed_type": "class",
+   "n_infected": 25,
+   "reg": null,
+   "reg_nodrift": null,
+   "reg_fixed": null,
+   "syn": null,
+   "lab": null
+  }
+ ]
+}

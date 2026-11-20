@@ -1,0 +1,85 @@
+{
+  "seeds": 5,
+  "n_per_band": 1000,
+  "days": 120,
+  "summary": {
+    "child": {
+      "fixed 38.0": {
+        "sens": 0.808,
+        "sens_min": 0.794,
+        "sens_max": 0.828,
+        "fp_per_1000": 1.41
+      },
+      "fixed 37.8": {
+        "sens": 0.899,
+        "sens_min": 0.888,
+        "sens_max": 0.907,
+        "fp_per_1000": 4.91
+      },
+      "personal (one rule)": {
+        "sens": 0.929,
+        "sens_min": 0.922,
+        "sens_max": 0.934,
+        "fp_per_1000": 2.06
+      },
+      "personal (age-aware)": {
+        "sens": 0.929,
+        "sens_min": 0.922,
+        "sens_max": 0.934,
+        "fp_per_1000": 2.06
+      }
+    },
+    "adult": {
+      "fixed 38.0": {
+        "sens": 0.667,
+        "sens_min": 0.655,
+        "sens_max": 0.679,
+        "fp_per_1000": 0.83
+      },
+      "fixed 37.8": {
+        "sens": 0.798,
+        "sens_min": 0.776,
+        "sens_max": 0.819,
+        "fp_per_1000": 2.9
+      },
+      "personal (one rule)": {
+        "sens": 0.86,
+        "sens_min": 0.846,
+        "sens_max": 0.874,
+        "fp_per_1000": 1.57
+      },
+      "personal (age-aware)": {
+        "sens": 0.86,
+        "sens_min": 0.846,
+        "sens_max": 0.874,
+        "fp_per_1000": 1.57
+      }
+    },
+    "older": {
+      "fixed 38.0": {
+        "sens": 0.134,
+        "sens_min": 0.119,
+        "sens_max": 0.146,
+        "fp_per_1000": 0.14
+      },
+      "fixed 37.8": {
+        "sens": 0.249,
+        "sens_min": 0.225,
+        "sens_max": 0.268,
+        "fp_per_1000": 0.58
+      },
+      "personal (one rule)": {
+        "sens": 0.415,
+        "sens_min": 0.395,
+        "sens_max": 0.447,
+        "fp_per_1000": 0.61
+      },
+      "personal (age-aware)": {
+        "sens": 0.461,
+        "sens_min": 0.441,
+        "sens_max": 0.493,
+        "fp_per_1000": 0.81
+      }
+    }
+  }
+}

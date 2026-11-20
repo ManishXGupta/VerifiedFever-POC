@@ -79,7 +79,7 @@ python experiments/make_figures.py && python experiments/make_figures_extra.py
 python experiments/make_tables.py      # LaTeX tables and numbers used in the paper
 python docs/make_screenshots.py        # UI screenshots (needs Playwright + Chrome)
 python docs/make_graphical_abstract.py
-pytest -q                              # 30 tests
+pytest -q                              # 39 tests
 ```
 
 ### 1. Individual fever detection
@@ -130,6 +130,42 @@ All 1600 tamper attempts were detected: edited values, back-dated timestamps, re
 | Processing time per reading | 0.31 ms |
 
 The detection, outbreak and cost results come from **simulations with stated assumptions**. They need to be confirmed with real readings.
+
+
+## Paper B: proactive temperature registry for early outbreak alerts
+
+`proactivehealth/` generalizes the school system to a consent-based registry open to everyone
+(manuscript for AI Magazine in [`paper_b/`](paper_b/)).
+
+![Registry architecture](docs/paper_b/architecture.png)
+
+| Part | File | What it does |
+|---|---|---|
+| Registry + consent | `proactivehealth/registry.py` | Signed readings, three revocable consent scopes, withdraw = stop + erase, small-cell suppression, audit log |
+| Anomaly layers | `proactivehealth/anomaly.py` | Age-aware personal fever rules; per-group count test, drift test, population CUSUM |
+| Triage + guard | `proactivehealth/triage.py` | Triage and cohort agents prepare; physicians and public health decide; counts-only public health messages |
+| Dashboard | `proactivehealth/dashboard.py` | Physician, public health and person views (`python -m proactivehealth.dashboard`, port 5050) |
+
+```bash
+python experiments/paper_b/individual_eval.py   # E1 personal rules by age band
+python experiments/paper_b/ilinet_replay.py     # E2 replay of 9 real CDC ILINet seasons (US + 10 HHS regions)
+python experiments/paper_b/town_eval.py         # E3 town outbreak detection and localization
+python experiments/paper_b/system_eval.py       # E4/E5 red team and throughput
+python experiments/paper_b/make_figures_b.py && python experiments/paper_b/make_numbers_b.py
+node paper_b/make_paper_b.js
+```
+
+Headline results (simulation; the replay uses real ILINet curves, see `data/ilinet/README.md`):
+
+| Result | Value |
+|---|---|
+| Illness-day detection, older adults (fixed 38.0 C vs age-aware personal rule) | 0.13 vs 0.46 |
+| ILINet replay, 10,000-person registry: median days before the declared onset was published | 19 (alerted in 90 of 90 seasons) |
+| Same readings summed weekly: median alert day vs onset week | +27 (vs +7 daily) |
+| Town: detected within 21 days, registry vs lab-confirmed | 42% vs 42%; registry 6 days earlier when both detect |
+| Town: first alert names the exact setting | 50% |
+| Red team | 650/650 prevented |
+| Throughput | 0.16 ms per reading on one core |
 
 ## Bench test (to do before submission)
 
