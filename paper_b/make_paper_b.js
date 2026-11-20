@@ -225,8 +225,6 @@ function build() {
   kids.push(P("**Conflict of interest.** The author declares no conflict of interest. **Funding.** None. **Ethics.** No human participants or personal data were involved; all individual readings are simulated, and the ILINet data are public aggregates. **Data and code availability.** Code, simulation parameters, the ILINet truth file and all results are available at https://github.com/ManishXGupta/VerifiedFever-POC (folders proactivehealth, experiments/paper_b and data/ilinet)."));
   kids.push(H1("References"));
   REFS.forEach((r) => kids.push(new Paragraph({ spacing: { after: 90, line: 264 }, indent: { left: 360, hanging: 360 }, children: runs(r, { size: 21 }) })));
-  kids.push(H1("Author Biography"));
-  kids.push(P("**Manish Gupta** is an enterprise AI architect and AI governance practitioner with more than 18 years of experience across healthcare, financial services, manufacturing and retail. He is an IEEE Senior Member, holds the IAPP Artificial Intelligence Governance Professional (AIGP) certification, and completed Harvard Medical School’s executive program on AI in health care. His research focuses on guardrailed agentic AI, verifiable data and responsible AI in health and public services."));
 
   const doc = new Document({
     creator: "Manish Gupta", title: TITLE, description: "Manuscript for AI Magazine",
