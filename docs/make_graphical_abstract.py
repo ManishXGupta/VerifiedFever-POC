@@ -132,10 +132,17 @@ def main():
                    ".st span{font-size:16.5px;color:#111827;line-height:1.3}"
                    ".kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}.k{box-sizing:border-box;padding:12px 14px}"
                    ".k .v{font-size:32px;white-space:nowrap}.k .l{font-size:16.5px;line-height:1.3;opacity:1}</style></head>")
-        page = html.replace("</head>", compact, 1).replace("Intake agent: signature, replay;<br>personal baseline rule",
-                                                          "Check signature and<br>personal baseline")
-        k0 = page.index('<div class="kpis"'); k1 = page.index('<div class="foot">')
-        page = page[:k0] + page[k0:k1].replace("<br>", " ") + page[k1:]
+        import re as _re
+        compact = compact.replace("</style>", ".sub{display:none}.st span{display:none}.st b{font-size:26px;margin-top:6px}"
+                                  ".st{padding:14px 6px}.st svg{width:62px;height:62px}"
+                                  ".k .v{font-size:38px}.k .l{font-size:22px;font-weight:600}</style>")
+        page = html.replace("</head>", compact, 1)
+        short = {"k1": "fever detection, low-normal students", "k2": "outbreak alert", "k3": "saved per avoided visit",
+                 "k4": "of routine actions run by AI agents"}
+        for k, t in short.items():
+            page = _re.sub(r'(<div class="k ' + k + r'"><div class="v">.*?</div><div class="l">).*?(</div>)',
+                           lambda m: m.group(1) + t + m.group(2), page, count=1, flags=_re.S)
+        page = _re.sub(r'>(\d+)% automated<', r'>\1%<', page)
         f = ROOT / "docs" / "_compact.html"
         f.write_text(page)
         pg4 = b.new_page(viewport={"width": 760, "height": 900}, device_scale_factor=4)
