@@ -54,6 +54,14 @@ Open http://127.0.0.1:5000. Four demo students are enrolled, each with two weeks
 5. **School portal**: the certificate is verified and accepted, and the absence is marked *Excused, verified*. Edit a downloaded file and upload it: it is refused.
 6. Back in the Parent app, try **Tamper** and **Replay**: both readings are rejected.
 
+## Check a certificate yourself (2 minutes)
+
+```bash
+python demo_certificate.py                                         # 7 steps, 15 PASS/FAIL checks
+python verify_certificate_file.py demo_output/certificate_package.json   # offline check: VALID
+# edit absence_end in demo_output/certificate_package.json, run again: INVALID
+```
+
 ## How it works
 
 | Part | File | What it does |

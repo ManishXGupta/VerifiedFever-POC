@@ -6,3 +6,4 @@ paper/*.aux
 paper/*.log
 paper/*.out
 experiments/bench_data.csv
+demo_output/
