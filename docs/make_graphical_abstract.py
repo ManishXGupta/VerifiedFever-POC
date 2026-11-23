@@ -123,6 +123,25 @@ def main():
             pg3.goto(f.as_uri())
             pg3.locator(".wrap").screenshot(path=str(ROOT / "docs" / "figures" / name))
             f.unlink()
+        # one compact merged image with dark, high-contrast text (for pasting into a Word column)
+        compact = ("<style>.wrap{width:760px;padding:18px 20px 20px;background:#fff}.foot{display:none}.arr{display:none}"
+                   "h1{font-size:32px;color:#0b1220}.sub{font-size:18px;color:#1f2937;margin-top:4px}"
+                   ".flow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 12px}"
+                   ".st{flex:none!important;padding:10px 6px;min-width:0;border:2px solid #c9d3e0;box-shadow:none}"
+                   ".st svg{width:54px;height:54px}.st b{font-size:22px;color:#0b1220;margin-top:2px}"
+                   ".st span{font-size:16.5px;color:#111827;line-height:1.3}"
+                   ".kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}.k{box-sizing:border-box;padding:12px 14px}"
+                   ".k .v{font-size:32px;white-space:nowrap}.k .l{font-size:16.5px;line-height:1.3;opacity:1}</style></head>")
+        page = html.replace("</head>", compact, 1).replace("Intake agent: signature, replay;<br>personal baseline rule",
+                                                          "Check signature and<br>personal baseline")
+        k0 = page.index('<div class="kpis"'); k1 = page.index('<div class="foot">')
+        page = page[:k0] + page[k0:k1].replace("<br>", " ") + page[k1:]
+        f = ROOT / "docs" / "_compact.html"
+        f.write_text(page)
+        pg4 = b.new_page(viewport={"width": 760, "height": 900}, device_scale_factor=4)
+        pg4.goto(f.as_uri())
+        pg4.locator(".wrap").screenshot(path=str(ROOT / "docs" / "figures" / "graphical_abstract_compact.png"))
+        f.unlink()
         b.close()
     print("graphical abstract written")
 
