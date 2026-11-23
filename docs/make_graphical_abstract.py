@@ -102,6 +102,27 @@ def main():
         pg2 = b.new_page(viewport={"width": 860, "height": 900}, device_scale_factor=4)
         pg2.goto(col.as_uri())
         pg2.locator(".wrap").screenshot(path=str(ROOT / "docs" / "figures" / "graphical_abstract_column.png"))
+        # two copy-paste-friendly images for Word (large text, no footnote): 1) workflow, 2) results
+        base = ("<style>.wrap{width:720px;padding:22px 24px}.foot{display:none}.arr{display:none}"
+                ".flow{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0 4px}"
+                ".st{flex:none!important;padding:14px 10px;min-width:0}.st svg{width:70px;height:70px}"
+                ".st b{font-size:25px}.st span{font-size:19px}"
+                ".kpis{display:grid;grid-template-columns:1fr 1fr;gap:14px}.k{box-sizing:border-box;padding:18px 18px}"
+                ".k .v{font-size:36px;white-space:nowrap}.k .l{font-size:19px;line-height:1.35}")
+        parts = {"graphical_abstract_part1_workflow.png": base + "h1{font-size:36px}.sub{font-size:20px}.kpis{display:none}</style></head>",
+                 "graphical_abstract_part2_results.png": base + "h1,.sub,.flow{display:none}</style></head>"}
+        for name, css in parts.items():
+            f = ROOT / "docs" / ("_" + name.replace(".png", ".html"))
+            page = html.replace("</head>", css, 1)
+            if "part2" in name:
+                page = page.replace('<div class="kpis">', '<div class="kpis" data-p2="1">')
+                k0 = page.index('<div class="kpis"'); k1 = page.index('<div class="foot">')
+                page = page[:k0] + page[k0:k1].replace("<br>", " ") + page[k1:]
+            f.write_text(page)
+            pg3 = b.new_page(viewport={"width": 720, "height": 900}, device_scale_factor=4)
+            pg3.goto(f.as_uri())
+            pg3.locator(".wrap").screenshot(path=str(ROOT / "docs" / "figures" / name))
+            f.unlink()
         b.close()
     print("graphical abstract written")
 
