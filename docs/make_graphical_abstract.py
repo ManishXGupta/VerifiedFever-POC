@@ -56,11 +56,11 @@ h1{{margin:0;font-size:38px;letter-spacing:-.5px}} .sub{{color:#5b6472;font-size
 </div>
 <div class="kpis">
 <div class="k k1"><div class="v">{sens_low_fixed:.2f} &rarr; {sens_low_pers:.2f}</div><div class="l">fever detection for students with a<br>low normal temperature (vs 38.0 &deg;C)</div></div>
-<div class="k k2"><div class="v">{lead:.0f} days earlier</div><div class="l">outbreak alert than absenteeism or<br>confirmed-case reports (median)</div></div>
+<div class="k k2"><div class="v">{lead:.0f} days earlier</div><div class="l">outbreak alert than absenteeism<br>or lab reports (median)</div></div>
 <div class="k k3"><div class="v">${save:.0f}</div><div class="l">saved per avoided note-only visit<br>(visit, parent time, travel)</div></div>
 <div class="k k4"><div class="v">{auto:.0f}% automated</div><div class="l">workflow actions run by agents;<br>{rt}/{rt} guardrail attacks stopped</div></div>
 </div>
-<div class="foot">Detection and outbreak results from simulated cohorts; cost from 2026 price, wage and mileage data with stated assumptions. Open source: github.com/ManishXGupta/VerifiedFever-POC</div>
+<div class="foot">Results from simulation (500 students; 480-student school terms); cost from 2026 price, wage and mileage data. Next: real thermometer bench test and school pilot. Code: github.com/ManishXGupta/VerifiedFever-POC</div>
 </div></body></html>"""
 
 
@@ -99,7 +99,7 @@ def main():
                    ".k .v{font-size:32px}.k .l{font-size:14.5px}.foot{font-size:12.5px}</style></head>")
         col = ROOT / "docs" / "graphical_abstract_column.html"
         col.write_text(html.replace("</head>", col_css, 1))
-        pg2 = b.new_page(viewport={"width": 860, "height": 900}, device_scale_factor=3)
+        pg2 = b.new_page(viewport={"width": 860, "height": 900}, device_scale_factor=4)
         pg2.goto(col.as_uri())
         pg2.locator(".wrap").screenshot(path=str(ROOT / "docs" / "figures" / "graphical_abstract_column.png"))
         b.close()
