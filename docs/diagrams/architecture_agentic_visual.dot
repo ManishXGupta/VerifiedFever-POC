@@ -1,0 +1,34 @@
+digraph agentic {
+  rankdir=TB; nodesep=0.18; ranksep=0.32; newrank=true; pad=0.12; bgcolor="white";
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=15, margin="0.10,0.06", penwidth=2.2];
+  edge [color="#334155", fontname="Helvetica-Bold", fontsize=13, arrowsize=0.9, penwidth=2];
+
+  therm [label=<<B>Registered thermometer</B><BR/>Ed25519-signed reading>, fillcolor="#dbe8fa", color="#1450a3"];
+  app   [label=<<B>Parent app</B><BR/>reading relay + certificate wallet>, fillcolor="#dbe8fa", color="#1450a3"];
+
+  subgraph cluster_agents { label=<<B>Agentic orchestration layer</B>>; style="rounded,dashed,filled"; fillcolor="#f5f8fe"; color="#1450a3"; penwidth=2.2; fontname="Helvetica"; fontsize=15; fontcolor="#1450a3"; labeljust="l";
+    orch  [label=<<B>Orchestrator</B><BR/>routes events, nurse queue by priority>, fillcolor="#c7dcf7", color="#1450a3"];
+    intake [label=<<B>Intake agent</B><BR/>verify + triage>, fillcolor="#fde3d6", color="#d4571e"];
+    cert   [label=<<B>Certificate agent</B><BR/>nurse brief, priority>, fillcolor="#fde3d6", color="#d4571e"];
+    comms  [label=<<B>Communication agent</B><BR/>parent notice, share>, fillcolor="#fde3d6", color="#d4571e"];
+    surv   [label=<<B>Surveillance agent</B><BR/>CUSUM, localize, playbook>, fillcolor="#fde3d6", color="#d4571e"];
+    guard  [label=<<B>Policy guard + hash-chained audit log</B><BR/>human-only approval, minimal disclosure,<BR/>user notes treated as data>, fillcolor="#fff1c9", color="#c98a00"];
+  }
+  tools [label=<<B>Tools</B><BR/>verifier, baseline rule,<BR/>certificate service>, fillcolor="#eef1f5", color="#64748b"];
+  nurse  [label=<<B>Nurse / physician</B><BR/>(human in the loop)>, fillcolor="#d6f0e2", color="#0f7a45"];
+  school [label=<<B>School portal</B><BR/>verify + accept>, fillcolor="#d6f0e2", color="#0f7a45"];
+  ph     [label=<<B>Public health</B><BR/>counts only>, fillcolor="#d6f0e2", color="#0f7a45"];
+
+  therm -> app [label=" BLE"];
+  app -> orch [label=" HTTPS"];
+  orch -> intake; orch -> cert;
+  {rank=same; intake; cert} {rank=same; comms; surv}
+  intake -> comms [style=invis]; cert -> surv [style=invis];
+  comms -> guard [style=dotted, arrowhead=none]; surv -> guard [style=dotted, arrowhead=none];
+  orch -> tools [dir=both, style=dashed, constraint=false];
+  {rank=same; orch; tools}
+  guard -> nurse [label=" approve / reject"];
+  guard -> school [label=" share", color="#0f7a45", fontcolor="#0f7a45"];
+  guard -> ph [label=" alert", style=dashed];
+  {rank=same; nurse; school; ph}
+}
