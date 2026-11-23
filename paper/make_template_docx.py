@@ -172,19 +172,20 @@ TITLE = ("Verified Fever, No Appointment: A Guardrailed Agentic AI and IoT Therm
          "School Absence Certificates and Early Outbreak Alerts")
 ABSTRACT = ("Many schools require a doctor\u2019s note after a few illness absences, so families visit a clinic for a mild "
             "fever only to obtain paperwork, while schools learn of outbreaks late. We present a guardrailed agentic AI "
-            "system built on a registered IoT thermometer that signs every daily reading. An orchestrator coordinates four "
-            "agents that verify and triage each reading against the student\u2019s own baseline, prepare certificates for "
-            "one-click nurse validation, relay approved certificates to the school with minimum disclosure, and watch "
-            "class- and school-level fever counts for outbreaks. A policy guard keeps every approval with a human, blocks "
-            "disclosure of temperatures or identities, treats user text as data, and writes a hash-chained audit log. In "
-            "simulation, the personal-baseline rule raised fever-day sensitivity for students with low normal "
-            "temperatures from {SensFixedLow} to {SensPersLow}. In simulated 480-student school terms, the surveillance "
-            "agent detected {ObDetPers}% of influenza outbreaks within 21 days, a median {ObLeadAbs} days before "
-            "absenteeism and confirmed-case reports, and pointed to the class where the outbreak began in {LocPers}% of "
-            "alerts versus {LocAbs}% for absenteeism. Over a full term the agents automated {AutoPct}% of workflow "
-            "actions, leaving about {HumanPerK} nurse decisions per 1000 student-days; all {RTTotal} guardrail attacks "
-            "and {NAttacks} tampering attempts were stopped. Each avoided note-only visit saves about ${CostVisitBase} "
-            "at 2026 prices and wages.")
+            "system built on a registered IoT thermometer that digitally signs every daily reading. Four AI agents check "
+            "each reading against the student\u2019s own normal temperature, prepare an absence certificate that a nurse "
+            "approves with one click, send the approved certificate to the school without revealing temperatures, and "
+            "watch class and school fever counts for outbreaks. A policy guard keeps every decision with a human and "
+            "logs every action. In reproducible simulations of 500 students over 90 days, comparing readings with each student\u2019s own baseline raised "
+            "detection of fever days for students with low normal temperatures from {SensFixedLow} with a fixed 38.0 "
+            "\u00b0C cutoff to {SensPersLow}. In simulated terms of a 480-student school ({ObNull} without and {ObTerms} "
+            "with an influenza outbreak), with alert thresholds allowing false alerts in at most 10% of "
+            "outbreak-free terms, the agents detected {ObDetPers}% of outbreaks within 21 days, a median {ObLeadAbs} days before "
+            "absenteeism or confirmed-case reports, and named the class where the outbreak began in {LocPers}% of alerts, "
+            "against {LocAbs}% for absenteeism. Over a full simulated term the agents handled {AutoPct}% of routine "
+            "actions, leaving about {HumanPerK} nurse decisions per 1000 student-days, and stopped all {RTTotal} "
+            "scripted guardrail attacks and all {NAttacks} tampering attempts. At 2026 prices and "
+            "wages, each avoided clinic visit saves a family about ${CostVisitBase}.")
 KEYWORDS = ("Agentic AI, multi-agent systems, human-in-the-loop, AI guardrails, Internet of Things, digital signatures, "
             "syndromic surveillance, school health")
 
