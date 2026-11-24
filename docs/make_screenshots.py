@@ -47,6 +47,9 @@ def main():
         # 2. nurse approves
         pg.goto(base + "/nurse")
         pg.locator(".card").nth(1).screenshot(path=str(OUT / "nurse.png"))
+        pg.set_viewport_size({"width": 640, "height": 900})
+        pg.locator(".card").nth(1).screenshot(path=str(OUT / "nurse_narrow.png"))
+        pg.set_viewport_size({"width": 1180, "height": 900})
         pg.click("button:has-text('Approve')")
         pg.wait_for_load_state()
         # 3. parent shares with school
@@ -59,6 +62,10 @@ def main():
         # 4. school portal
         pg.goto(base + "/school")
         pg.locator(".row").first.screenshot(path=str(OUT / "school.png"))
+        pg.set_viewport_size({"width": 640, "height": 900})
+        cards = pg.locator(".row").first.locator(".card")
+        cards.nth(0).screenshot(path=str(OUT / "school_receive_narrow.png"))
+        cards.nth(1).screenshot(path=str(OUT / "school_accepted_narrow.png"))
         b.close()
     srv.shutdown()
     print("screens written to", OUT)

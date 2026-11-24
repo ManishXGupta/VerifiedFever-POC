@@ -90,5 +90,35 @@ def ui_column_figure():
     plt.close(fig)
 
 
+def ui_column_figure_large():
+    """Column-width UI figure with large, readable nurse and school panels (each spans the column)."""
+    from PIL import Image
+    imgs = {k: Image.open(SCR / f) for k, f in (("a", "parent_reading.png"), ("b", "parent_share.png"),
+                                               ("c", "nurse_narrow.png"), ("d", "school_accepted_narrow.png"))}
+    W = 3.4
+    ha = W / 2 * imgs["a"].height / imgs["a"].width
+    hc = W * imgs["c"].height / imgs["c"].width
+    hd = W * imgs["d"].height / imgs["d"].width
+    title = 0.17
+    H = ha + hc + hd + 3 * title + 0.05
+    fig = plt.figure(figsize=(W, H))
+    y = H
+    def place(img, x0, w, h, label):
+        nonlocal_y = None
+        return img, x0, w, h, label
+    rows = [([("a", 0, W / 2, "(a) Signed reading"), ("b", W / 2, W / 2, "(b) Share: code / QR")], ha),
+            ([("c", 0, W, "(c) Nurse one-click validation")], hc),
+            ([("d", 0, W, "(d) School verifies and accepts")], hd)]
+    for items, h in rows:
+        y -= title + h
+        for key, x0, w, label in items:
+            ax = fig.add_axes([x0 / W + 0.005, y / H, w / W - 0.01, h / H])
+            ax.imshow(imgs[key]); ax.axis("off")
+            fig.text(x0 / W + 0.01, (y + h + 0.03) / H, label, fontsize=8, fontweight="bold", color=INK, va="bottom")
+    fig.savefig(DOCS / "ui_column_large.png", dpi=400)
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     ui_column_figure()
+    ui_column_figure_large()
